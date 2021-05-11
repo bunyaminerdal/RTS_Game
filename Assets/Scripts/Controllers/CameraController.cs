@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    public static CameraController Instance;
+
     private Camera cameraMain;
     private float movementSpeed;
     public float movementTime;
@@ -26,14 +28,27 @@ public class CameraController : MonoBehaviour
     private Vector3 rotateStartPosition;
     private Vector3 rotateCurrentPosition;
 
-    private bool isGameMenuOpened;
+   
     
     public float timecatch = 0f;
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+        cameraMain = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        cameraMain = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        
         newPosition = transform.position;
         newRotation = transform.rotation;
         newZoom = cameraMain.transform.localPosition;
@@ -52,8 +67,7 @@ public class CameraController : MonoBehaviour
             
             loadPosition=Vector3.zero;
         }else{
-            if(!isGameMenuOpened)
-            {
+            
                 if(Time.timeScale==0)
                 {
                     timecatch=Time.fixedDeltaTime/2;
@@ -68,7 +82,7 @@ public class CameraController : MonoBehaviour
                 transform.position = Vector3.Lerp(transform.position, newPosition, timecatch* movementTime);
                 transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, timecatch* movementTime);
                 cameraMain.transform.localPosition = Vector3.Lerp(cameraMain.transform.localPosition,newZoom, timecatch * movementTime);
-            }
+            
             
         }
         
@@ -177,8 +191,5 @@ public class CameraController : MonoBehaviour
                 
     }
 
-    public void gameMenuIsOpened(bool isOpened)
-    {
-        isGameMenuOpened = isOpened;
-    }
+
 }

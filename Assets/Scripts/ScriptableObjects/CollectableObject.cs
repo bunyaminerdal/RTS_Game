@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "AI/CollectableProperties")]
-public class CollectableProperties : ScriptableObject
+[CreateAssetMenu(fileName = "New Collectable", menuName = "Collectables/Collectable")]
+public class CollectableObject : ScriptableObject
 {
     public string collectablename;
     public string description;

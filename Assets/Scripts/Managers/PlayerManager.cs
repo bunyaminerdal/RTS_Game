@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 
 public class PlayerManager : MonoBehaviour
 {
+    public static PlayerManager Instance;
 
     private Camera cameraMain;
     RaycastHit hit;
@@ -13,7 +14,6 @@ public class PlayerManager : MonoBehaviour
     Interactable selectedInteractable;
     bool isDragging = false;
     Vector3 mousePositon;
-    bool isGameMenuOpened;
     public UserInterface displayInventory;
     public UserInterface displayEquipment;
     public UserInterface displayInfo;
@@ -22,7 +22,30 @@ public class PlayerManager : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = null;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         cameraMain = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+    }
+    private void OnEnable()
+    {        
+        InputManager.LeftButtonClickDownAction += LeftClickDown;
+        InputManager.LeftButtonClickUpAction += LeftClickUp;
+        InputManager.RightButtonClickDownAction += RightClickDown;
+        InputManager.DeSelectUnitAction += DeselectUnits;
+    }
+    private void OnDisable()
+    {        
+        InputManager.LeftButtonClickDownAction -= LeftClickDown;
+        InputManager.LeftButtonClickUpAction -= LeftClickUp;
+        InputManager.RightButtonClickDownAction -= RightClickDown;
+        InputManager.DeSelectUnitAction -= DeselectUnits;
     }
     private void OnGUI()
     {
@@ -151,8 +174,7 @@ public class PlayerManager : MonoBehaviour
 
     private void İnteractable_onCollectButtonpressed()
     {
-        if (!isGameMenuOpened)
-        {
+        
             if (selectedInteractable != null)
             {
                 for (int i = 0; i < selectedUnits.Count; i++)
@@ -176,7 +198,7 @@ public class PlayerManager : MonoBehaviour
                 //bunuda kaldırmak lazım
                 DeselectInteractable();
             }
-        }
+        
     }
 
     public void DeselectUnit(UnitController unit)
@@ -218,17 +240,9 @@ public class PlayerManager : MonoBehaviour
         return viewportBounds.Contains(cameraMain.WorldToViewportPoint(transform.position));
     }
 
-    public void gameMenuOpener(bool isOpened)
-    {
-        //TODO: MEnu açıldığında interact menu varsa kapatmalıyız
-        DeselectInteractable();
-        GameObject.Find("CanvasMenu").transform.GetChild(0).gameObject.SetActive(isOpened);
-        isGameMenuOpened = isOpened;
-    }
-
     private void pouseText()
     {
-        if (!isGameMenuOpened && Time.timeScale == 0)
+        if (Time.timeScale == 0)
         {
             GameObject.Find("CanvasUI").transform.GetChild(0).gameObject.SetActive(true);
         }

@@ -4,33 +4,46 @@ using UnityEngine;
 
 public class UnitCreateManager : MonoBehaviour
 {
-    public GameObject GarbagePrefab;
-    public GameObject TrashbinPrefab;
-    public GameObject interactableCollector;
+    public static UnitCreateManager Instance;
 
-    public List<ItemObject> itemObjectList;
+    [SerializeField]
+    private GameObject GarbagePrefab;
+    [SerializeField]
+    private GameObject TrashbinPrefab;
+    [SerializeField]
+    private GameObject interactableCollector;
+    [SerializeField]
+    private ItemObjectList itemObjectList;
 
     private GameObject createdInteractable;
     private GameObject interactPrefab;
-    public List<InteractableBasics> interactableList;
 
-    public Transform clickMarkerTransform;
-    public GameObject manPrefab;
-    public GameObject manPrefab1;
-    public GameObject manPrefab2;
-    public GameObject womanPrefab;
-    public GameObject womanPrefab1;
-    public GameObject womanPrefab2;
-    public GameObject policePrefab;
+    [SerializeField]
+    private Transform clickMarkerTransform;
+    [SerializeField]
+    private GameObject manPrefab;
+    [SerializeField]
+    private GameObject manPrefab1;
+    [SerializeField]
+    private GameObject manPrefab2;
+    [SerializeField]
+    private GameObject womanPrefab;
+    [SerializeField]
+    private GameObject womanPrefab1;
+    [SerializeField]
+    private GameObject womanPrefab2;
+    [SerializeField]
+    private GameObject policePrefab;
 
-    public GameObject unitCollector;
-
-    public UnitStats unitStats;
-
-    public List<UnitBasics> unitList;
-    public List<InventoryBasics> inventoryList;
-    public List<ItemBasics> itemList;
-    public List<ItemAttributeBasics> itemAttributeList;
+    [SerializeField]
+    private GameObject unitCollector;
+    [SerializeField]
+    private UnitStats unitStats;
+    public List<InteractableBasics> interactableList { get; private set; }
+    public List<UnitBasics> unitList { get; private set; }
+    public List<InventoryBasics> inventoryList { get; private set; }
+    public List<ItemBasics> itemList { get; private set; }
+    public List<ItemAttributeBasics> itemAttributeList { get; private set; }
 
     private GameObject createdUnit;
     private GameObject unitPrefab;
@@ -41,6 +54,15 @@ public class UnitCreateManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         interactableList = new List<InteractableBasics>();
         InteractableBasics interact1 = new InteractableBasics("cop1", "Garbage", new Vector3(10f, 0f, 0f), new Vector3(0f, 0f, 0f), 4f, 0f);
         InteractableBasics interact2 = new InteractableBasics("cop2", "TrashBin", new Vector3(20f, 0f, 0f), new Vector3(0f, 0f, 0f), 0f, 10f);
@@ -232,7 +254,7 @@ public class UnitCreateManager : MonoBehaviour
                         {
                             if (item.inventoryName == inventory.inventoryName)
                             {
-                                foreach (ItemObject itemobjprefab in itemObjectList)
+                                foreach (ItemObject itemobjprefab in itemObjectList.itemObjectList)
                                 {
                                     if (itemobjprefab.itemName == item.itemName)
                                     {
@@ -276,7 +298,7 @@ public class UnitCreateManager : MonoBehaviour
                         {
                             if (item.inventoryName == inventory.inventoryName)
                             {
-                                foreach (ItemObject itemobjprefab in itemObjectList)
+                                foreach (ItemObject itemobjprefab in itemObjectList.itemObjectList)
                                 {
                                     if (itemobjprefab.itemName == item.itemName)
                                     {

@@ -12,8 +12,6 @@ public class UnitBoxController : MonoBehaviour
     private GameObject newunitImage;
     private Button unitselectButton;
 
-    public PlayerManager playerManager;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -33,12 +31,12 @@ public class UnitBoxController : MonoBehaviour
     void TaskOnClick(UnitController unit){
         if(unit.isSelected()==false)
         {
-           playerManager.selectedUnits.Add(unit);
+           PlayerManager.Instance.selectedUnits.Add(unit);
            unit.SetSelected(true);
         }else if(unit.isSelected()==true)
         {
             unit.SetSelected(false);
-            playerManager.selectedUnits.Remove(unit);
+            PlayerManager.Instance.selectedUnits.Remove(unit);
         }
 	}
 

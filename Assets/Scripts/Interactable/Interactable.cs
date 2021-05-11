@@ -16,7 +16,7 @@ public class Interactable : MonoBehaviour
     protected GameObject Menu;
     protected Button yourButton;
 
-    public CollectableProperties collectable;
+    public CollectableObject collectable;
     private Text[] collectableTexts;
     private float maxAmount;
     private float minAmount;

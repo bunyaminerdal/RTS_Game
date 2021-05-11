@@ -4,24 +4,39 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
-    public CameraController cameraController;
-    public SaveManager saveManager;
-    public PlayerManager playerManager;
-    public SaveGameMenuController saveGameMenuController;
+    public static InputManager Instance;
+
+    public static event Action LeftButtonClickDownAction;
+    public static event Action LeftButtonClickUpAction;
+    public static event Action RightButtonClickDownAction;
+    public static event Action QuickSaveAction;
+    public static event Action QuickLoadAction;
+    public static event Action DeSelectUnitAction;
 
     private bool isGameMenuOpened;
-    private bool isSaveMenuOpened;
-    private bool isLoadMenuOpened;
     private float timeScaleNow=1;
-    private float timeScaleNow2=1;
+    private float timeScaleNow1 = 1;
 
+    private void Awake()
+    {
+        if(Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+    
     // Start is called before the first frame update
     void Start()
     {
         
     }
 
-    // Update is called once per frame
+    // Update is called once per frame                                                                                                           
     void Update()
     {
         if(!isGameMenuOpened)
@@ -29,17 +44,17 @@ public class InputManager : MonoBehaviour
             //Detect if mouse is down
             if(Input.GetMouseButtonDown(0))
             {
-                playerManager.LeftClickDown();
+                LeftButtonClickDownAction?.Invoke();                
 
             }
             if (Input.GetMouseButtonUp(0))
             {
-                playerManager.LeftClickUp();
-                
+
+                LeftButtonClickUpAction?.Invoke();
             }
             if(Input.GetMouseButtonDown(1))
             {
-                playerManager.RightClickDown();
+                RightButtonClickDownAction?.Invoke();
             }
             if(Input.GetKeyDown(KeyCode.Space))
             {
@@ -56,13 +71,14 @@ public class InputManager : MonoBehaviour
             if(!isGameMenuOpened)
             {
                 if (Input.GetKeyDown(KeyCode.F5))
-                {            
-                    
-                    saveManager.QuickSave();
+                {
+
+                    QuickSaveAction?.Invoke();
                 }
                 if (Input.GetKeyDown(KeyCode.F6))
-                {                    
-                    saveManager.QuickLoad();
+                {
+                    DeSelectUnitAction?.Invoke();
+                    QuickLoadAction?.Invoke();
                 }
             }
         }
@@ -71,49 +87,39 @@ public class InputManager : MonoBehaviour
         {
             if(!isGameMenuOpened)
             {
-                gameMenuOpenerInput(true);
-            }else if(isGameMenuOpened && isSaveMenuOpened)
-            {
-                SaveMenuOpenerInput(false);
-            }else if(isGameMenuOpened && isLoadMenuOpened)
-            {
-                LoadMenuOpenerInput(false);
-            }else if(isGameMenuOpened && !isSaveMenuOpened)
-            {
-                gameMenuOpenerInput(false);
+                GameMenuOpenerInput(true);
             }
         }
     }
-
-    public void gameMenuOpenerInput(bool isOpened)
+    public void IsGameMenuOpened(bool isOpened)
     {
-        isGameMenuOpened=isOpened;
-        playerManager.gameMenuOpener(isOpened);
-        cameraController.gameMenuIsOpened(isOpened);
-        if(isOpened){ 
-            timeScaleNow2=Time.timeScale;           
+        isGameMenuOpened = isOpened;
+        if (isOpened)
+        {
+            timeScaleNow1 = Time.timeScale;
+            Time.timeScale = 0;
+
+        }
+        else
+        {
+            Time.timeScale = timeScaleNow1;
+        }
+    }
+    void GameMenuOpenerInput(bool isOpened)
+    {
+        
+        isGameMenuOpened =isOpened;
+        GameObject.Find("CanvasMenu").transform.GetChild(0).gameObject.SetActive(isOpened);
+        if(isOpened){
+            timeScaleNow1 = Time.timeScale;           
             Time.timeScale = 0;
             
         }else
         {
-            Time.timeScale=timeScaleNow2;            
+            Time.timeScale= timeScaleNow1;            
         }
     }
 
-    public void SaveMenuOpenerInput(bool isOpened)
-    {
-        isSaveMenuOpened=isOpened;
-        saveManager.LoadGameData();
-        saveGameMenuController.saveMenuOpener(isOpened);
-        GameObject.Find("CanvasMenu").transform.GetChild(0).gameObject.SetActive(!isOpened);
-        GameObject.Find("CanvasMenu").transform.GetChild(1).gameObject.SetActive(isOpened);
-    }
-    public void LoadMenuOpenerInput(bool isOpened)
-    {
-        isLoadMenuOpened=isOpened;
-        saveManager.LoadGameData();
-        saveGameMenuController.loadMenuOpener(isOpened);
-        GameObject.Find("CanvasMenu").transform.GetChild(0).gameObject.SetActive(!isOpened);
-        GameObject.Find("CanvasMenu").transform.GetChild(2).gameObject.SetActive(isOpened);
-    }
+    
+
 }
