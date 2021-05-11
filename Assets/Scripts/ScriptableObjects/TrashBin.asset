@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64659874be05e7644bb8ca0502ad34cc, type: 3}
+  m_Name: TrashBin
+  m_EditorClassIdentifier: 
+  collectablename: Trash bin
+  description: Search for recyclable  materials
+  maxAmount: 20
+  minAmount: 0
+  CurrentAmount: 20
+  respawnTime: 300
+  interactSlot: 2
+  item: {fileID: 11400000, guid: b3a18144d9053ed4b83242fe1326a11f, type: 2}
