@@ -8,13 +8,26 @@ using TMPro;
 
 public abstract class UserInterface : MonoBehaviour
 {
+    private NewInputManager InputManager;
     public GameObject inventoryPrefab;
     protected UnitController unit;
     public UnitInventory unitInventory;
     public UnitInventory unitEqInventory;
     public Dictionary<GameObject,InventorySlot> slotsOnInterface = new Dictionary<GameObject,InventorySlot>();
     public Dictionary<GameObject, Attribute> textOnInterface = new Dictionary<GameObject, Attribute>();
-    // Start is called before the first frame update
+    private PlayerInputActions UIActions;
+    private void Awake()
+    {
+        UIActions = new PlayerInputActions();
+    }
+    private void OnEnable()
+    {
+        UIActions.Enable();
+    }
+    private void OnDisable()
+    {
+        UIActions.Disable();
+    }
     void Start()
     {
         unitInventory = new UnitInventory(6);
@@ -24,7 +37,7 @@ public abstract class UserInterface : MonoBehaviour
         unit = null;
         AddEvent(gameObject,EventTriggerType.PointerEnter, delegate {OnEnterInterface(gameObject);});
         AddEvent(gameObject,EventTriggerType.PointerExit, delegate {OnExitInterface(gameObject);});
-
+        
     }
 
     // Update is called once per frame
@@ -151,9 +164,10 @@ public abstract class UserInterface : MonoBehaviour
     }
     public void OnDrag(GameObject obj)
     {
-        if(MouseData.tempItemBeingDragged != null)
+        Vector2 position = UIActions.UI.Point.ReadValue<Vector2>();
+        if (MouseData.tempItemBeingDragged != null)
         {
-            MouseData.tempItemBeingDragged.GetComponent<RectTransform>().position = Input.mousePosition;
+            MouseData.tempItemBeingDragged.GetComponent<RectTransform>().position = position;
         }
     }
     public void OnEnterInterface(GameObject obj)

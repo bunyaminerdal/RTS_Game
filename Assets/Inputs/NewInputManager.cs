@@ -86,7 +86,6 @@ public class NewInputManager : MonoBehaviour ,
 
         playerInputActions.Disable();
     }
-
     private void Interact_performed(InputAction.CallbackContext context)
     {
         var value = context.ReadValue<float>() ;        
