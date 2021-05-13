@@ -10,7 +10,7 @@ public class InteractCommand : Command
     {        
         cameraMain = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
     }
-    public override void ExecuteWithVector2(Vector2 vector2)
+    public override void ExecuteWithVector2(Vector2 vector2, bool isMultiSelection)
     {
         if (!IsMouseOverUI())
         {           

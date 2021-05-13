@@ -17,6 +17,6 @@ public class ZoomCommand : Command
     public override void ExecuteWithFloat(float value)
     {
         zoomAmount = Mathf.Clamp(zoomAmount -(value / zoomSpeed), minZoom, maxZoom) ;
-        transform.position = Vector3.Lerp(transform.position,new Vector3(0, zoomAmount, 0),lerpTime);
+        transform.position = Vector3.Lerp(transform.position,new Vector3(transform.position.x, zoomAmount, transform.position.z),lerpTime);
     }
 }

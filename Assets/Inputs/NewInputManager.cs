@@ -7,7 +7,7 @@ public class NewInputManager : MonoBehaviour ,
     IInteractInput, ISelectionInput, ISelectionBoxInput,
     IPauseInput, IMenuActionInput, IQuickSaveInput,
     IQuickLoadInput, IMovementInput,
-    IZoomInput, IRotationInput
+    IZoomInput, IRotationInput, IMultiSelectionInput
 {
     [SerializeField]
     private Command interactInputCommand;
@@ -45,6 +45,8 @@ public class NewInputManager : MonoBehaviour ,
     public bool isPressingRotation { get; private set; }
     public float rotationAmount { get; private set; }
 
+    public bool isMultiSelection { get; private set; }
+
     private void Awake()
     {
         playerInputActions = new PlayerInputActions();
@@ -63,8 +65,11 @@ public class NewInputManager : MonoBehaviour ,
         playerInputActions.Player.Movement.performed += Movement_performed;
         playerInputActions.Player.ZoomAction.performed += ZoomAction_performed;
         playerInputActions.Player.Rotation.performed += Rotation_performed;
+        playerInputActions.Player.MultiSelection.performed += MultiSelection_performed;
     }
-      
+
+
+
     private void OnDisable()
     {
         playerInputActions.Player.Interact.performed -= Interact_performed;
@@ -77,6 +82,7 @@ public class NewInputManager : MonoBehaviour ,
         playerInputActions.Player.Movement.performed -= Movement_performed;
         playerInputActions.Player.ZoomAction.performed -= ZoomAction_performed;
         playerInputActions.Player.Rotation.performed -= Rotation_performed;
+        playerInputActions.Player.MultiSelection.performed -= MultiSelection_performed;
 
         playerInputActions.Disable();
     }
@@ -99,7 +105,7 @@ public class NewInputManager : MonoBehaviour ,
         IsPressingSelection = value >= 0.15;
         if (selectionInputCommand != null && IsPressingSelection)
         {
-            selectionInputCommand.ExecuteWithVector2(position);
+            selectionInputCommand.ExecuteWithVector2(position, isMultiSelection);
         }
     }
     private void SelectionBox_performed(InputAction.CallbackContext context)
@@ -117,7 +123,7 @@ public class NewInputManager : MonoBehaviour ,
         else
         {
             playerInputActions.Player.MousePosition.performed -= MousePosition_performed;
-            selectionBoxInputCommand.EndWithVector2(position);
+            selectionBoxInputCommand.EndWithVector2(position,isMultiSelection);
             //Debug.Log("selection box end:" + value);
         }
     }
@@ -211,5 +217,10 @@ public class NewInputManager : MonoBehaviour ,
             playerInputActions.Player.MousePosition.performed -= MousePosition_performed;
             rotationCommand.EndWithVector2(position);
         }
+    }
+    private void MultiSelection_performed(InputAction.CallbackContext context)
+    {
+        var value = context.ReadValue<float>();
+        isMultiSelection = value >= 0.15;                
     }
 }

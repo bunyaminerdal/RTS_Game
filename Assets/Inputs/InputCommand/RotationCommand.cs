@@ -11,14 +11,14 @@ public class RotationCommand : Command
     private Vector2 mouseEndPosition;
     
     private Quaternion newRotation;
-    public override void ExecuteWithVector2(Vector2 vector2)
+    public override void ExecuteWithVector2(Vector2 vector2, bool isMultiSelection)
     {
         if (isRotating) return;
         mouseEndPosition = vector2;
         mouseStartPositon = vector2;
         isRotating = true;
     }
-    public override void EndWithVector2(Vector2 vector2)
+    public override void EndWithVector2(Vector2 vector2, bool isMultiSelection)
     {
         isRotating = false;        
     }

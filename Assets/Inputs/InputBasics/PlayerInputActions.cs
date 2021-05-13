@@ -105,6 +105,14 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""MultiSelection"",
+                    ""type"": ""Button"",
+                    ""id"": ""5756cadd-e8e4-4cbc-92db-f2a9bf8de4f2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=2)""
                 }
             ],
             ""bindings"": [
@@ -327,6 +335,17 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""action"": ""Rotation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d316813a-69cc-4e83-98da-9db8f0a02665"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MultiSelection"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -346,6 +365,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
         m_Player_QuickSaveAction = m_Player.FindAction("QuickSaveAction", throwIfNotFound: true);
         m_Player_QuickLoadAction = m_Player.FindAction("QuickLoadAction", throwIfNotFound: true);
         m_Player_Rotation = m_Player.FindAction("Rotation", throwIfNotFound: true);
+        m_Player_MultiSelection = m_Player.FindAction("MultiSelection", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -406,6 +426,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
     private readonly InputAction m_Player_QuickSaveAction;
     private readonly InputAction m_Player_QuickLoadAction;
     private readonly InputAction m_Player_Rotation;
+    private readonly InputAction m_Player_MultiSelection;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -421,6 +442,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
         public InputAction @QuickSaveAction => m_Wrapper.m_Player_QuickSaveAction;
         public InputAction @QuickLoadAction => m_Wrapper.m_Player_QuickLoadAction;
         public InputAction @Rotation => m_Wrapper.m_Player_Rotation;
+        public InputAction @MultiSelection => m_Wrapper.m_Player_MultiSelection;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -463,6 +485,9 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 @Rotation.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRotation;
                 @Rotation.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRotation;
                 @Rotation.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRotation;
+                @MultiSelection.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMultiSelection;
+                @MultiSelection.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMultiSelection;
+                @MultiSelection.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMultiSelection;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -500,6 +525,9 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 @Rotation.started += instance.OnRotation;
                 @Rotation.performed += instance.OnRotation;
                 @Rotation.canceled += instance.OnRotation;
+                @MultiSelection.started += instance.OnMultiSelection;
+                @MultiSelection.performed += instance.OnMultiSelection;
+                @MultiSelection.canceled += instance.OnMultiSelection;
             }
         }
     }
@@ -517,5 +545,6 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
         void OnQuickSaveAction(InputAction.CallbackContext context);
         void OnQuickLoadAction(InputAction.CallbackContext context);
         void OnRotation(InputAction.CallbackContext context);
+        void OnMultiSelection(InputAction.CallbackContext context);
     }
 }

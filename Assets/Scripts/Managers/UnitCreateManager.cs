@@ -176,11 +176,11 @@ public class UnitCreateManager : MonoBehaviour
                 createdUnit.transform.position = unitList[i].position;
                 createdUnit.transform.eulerAngles = unitList[i].rotation;
 
-                UnitController unitcontroller = createdUnit.GetComponent<UnitController>();
-                unitcontroller.unitName = unitList[i].unitName;
-                unitcontroller.unitType = unitList[i].unitType;
-                unitcontroller.clickMarkerTransform = clickMarkerTransform;
-                unitcontroller.unitDestination = unitList[i].destination;
+                PlayerUnitController PlayerUnitController = createdUnit.GetComponent<PlayerUnitController>();
+                PlayerUnitController.unitName = unitList[i].unitName;
+                PlayerUnitController.unitType = unitList[i].unitType;
+                PlayerUnitController.clickMarkerTransform = clickMarkerTransform;
+                PlayerUnitController.unitDestination = unitList[i].destination;
                 if (unitList[i].interactName != "No interact")
                 {
                     Interactable[] interacts = GameObject.Find("InteractableCollector").GetComponentsInChildren<Interactable>();
@@ -191,10 +191,10 @@ public class UnitCreateManager : MonoBehaviour
                             interactableObject = interact;
                         }
                     }
-                    unitcontroller.unitInteract = interactableObject;
+                    PlayerUnitController.unitInteract = interactableObject;
                 }
 
-                unitBoxController.onUnitCreated(unitcontroller);
+                unitBoxController.onUnitCreated(PlayerUnitController);
             }
 
         }
@@ -234,7 +234,7 @@ public class UnitCreateManager : MonoBehaviour
     void CreateInventory()
     {
         units = GameObject.Find("UnitCollector").GetComponentsInChildren<PlayerUnitController>();
-        foreach (UnitController unit in units)
+        foreach (PlayerUnitController unit in units)
         {
 
             foreach (InventoryBasics inventory in inventoryList)

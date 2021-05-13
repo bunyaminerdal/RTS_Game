@@ -10,12 +10,14 @@ public class SelectionBoxCommand : Command
     private Vector3 mouseStartPositon;
     private Vector3 mouseEndPosition;
     private bool isDragging;
+    private PlayerManager playerManager;
 
     private void Awake()
     {
+        playerManager = GetComponent<PlayerManager>();
         cameraMain = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
     }
-    public override void ExecuteWithVector2(Vector2 vector2)
+    public override void ExecuteWithVector2(Vector2 vector2, bool isMultiSelection)
     {
         if (isDragging) return;
         if (!IsMouseOverUI())
@@ -30,7 +32,6 @@ public class SelectionBoxCommand : Command
                     hit.transform.TryGetComponent<GroundIneraction>(out GroundIneraction ground);
                                         
                     if (ground == null) return;
-                    
                     mouseEndPosition = vector2;
                     mouseStartPositon = vector2;
                     isDragging = true;
@@ -40,19 +41,22 @@ public class SelectionBoxCommand : Command
         }
     }
 
-    public override void EndWithVector2(Vector2 vector2)
+    public override void EndWithVector2(Vector2 vector2, bool isMultiSelection)
     {
         if (!isDragging) return;
+        List<PlayerUnitController> playerUnitControllers =new List<PlayerUnitController>();
         var viewportBounds = ScreenHelper.GetViewportBounds(cameraMain, mouseStartPositon, vector2);        
         //DeselectUnits();
         foreach (var selectableObject in FindObjectsOfType<PlayerUnitController>())
         {
             if (viewportBounds.Contains(cameraMain.WorldToViewportPoint(selectableObject.transform.position)))
             {
-                ///SelectUnit(selectableObject.gameObject.GetComponent<UnitController>(), true);
-                Debug.Log(selectableObject.unitName);
+                playerUnitControllers.Add(selectableObject.GetComponent<PlayerUnitController>());
             }
         }
+        if(!isMultiSelection) playerManager.DeselectUnits();
+        if(!isMultiSelection && playerUnitControllers.Count <=0) playerManager.DeselectInteractable();
+        if (playerUnitControllers.Count > 0) playerManager.SelectUnits(playerUnitControllers.ToArray(),isMultiSelection);
         isDragging = false;
         
     }

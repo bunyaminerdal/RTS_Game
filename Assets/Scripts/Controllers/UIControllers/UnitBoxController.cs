@@ -6,41 +6,48 @@ using TMPro;
 
 public class UnitBoxController : MonoBehaviour
 {    
-    private Dictionary<UnitController,GameObject> imagedict;
+    private Dictionary<PlayerUnitController,GameObject> imagedict;
     public GameObject unitImage;
     private GridLayoutGroup gridLayoutGroup;
     private GameObject newunitImage;
     private Button unitselectButton;
+    private PlayerManager playerManager;
+
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
+        playerManager = PlayerManager.Instance;
         gridLayoutGroup = transform.GetComponent<GridLayoutGroup>();
-        imagedict = new Dictionary<UnitController, GameObject>();
+        imagedict = new Dictionary<PlayerUnitController, GameObject>();
 
 
     }
 
  
-    public void onUnitSelected(UnitController unit, bool isSelected)
+    public void onUnitSelected(PlayerUnitController unit, bool isSelected)
     {
         imagedict.TryGetValue(unit, out newunitImage);
         newunitImage.transform.GetChild(0).gameObject.SetActive(isSelected);
 
     }    
-    void TaskOnClick(UnitController unit){
+    void TaskOnClick(PlayerUnitController unit){
+
+        //TODO: bu kısımda event ya da action kullanılabilir.
+        if (playerManager == null) return;
         if(unit.isSelected()==false)
         {
-           PlayerManager.Instance.selectedUnits.Add(unit);
-           unit.SetSelected(true);
+            
+           playerManager.SelectUnit(unit);
+           //unit.SetSelected(true);
         }else if(unit.isSelected()==true)
         {
             unit.SetSelected(false);
-            PlayerManager.Instance.selectedUnits.Remove(unit);
+            playerManager.DeselectUnit(unit);
         }
 	}
 
-     public void onUnitCreated(UnitController unit)
+     public void onUnitCreated(PlayerUnitController unit)
     {        
         newunitImage = Instantiate(unitImage, transform);
         TMP_Text text1 = newunitImage.transform.GetChild(2).GetComponent<TMP_Text>();
@@ -81,7 +88,7 @@ public class UnitBoxController : MonoBehaviour
         imagedict.Clear();
     }
 
-    public void onItemChange(UnitController unit, Texture2D unitTexture)
+    public void onItemChange(PlayerUnitController unit, Texture2D unitTexture)
     {
         imagedict.TryGetValue(unit, out newunitImage);
         newunitImage.transform.GetChild(1).GetComponent<RawImage>().texture = unitTexture;

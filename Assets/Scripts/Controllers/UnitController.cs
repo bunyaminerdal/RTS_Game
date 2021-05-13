@@ -241,7 +241,7 @@ public class UnitController : MonoBehaviour {
             unitCam.targetTexture = null;
             RenderTexture.active = null;
             unitCam.gameObject.SetActive(false);            
-            unitBoxController.onItemChange(this,unitTexture);
+            unitBoxController.onItemChange(GetComponent<PlayerUnitController>(),unitTexture);
         }
         
     }
@@ -394,7 +394,7 @@ public class UnitController : MonoBehaviour {
     {
         transform.Find("SelectionMarker").gameObject.SetActive(isSelected);
         isUnitSelected=isSelected;
-        unitBoxController.onUnitSelected(this, isSelected);
+        unitBoxController.onUnitSelected(GetComponent<PlayerUnitController>(), isSelected);
     }
 
     public bool isSelected()

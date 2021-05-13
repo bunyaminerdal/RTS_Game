@@ -8,12 +8,10 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager Instance;
 
     private Camera cameraMain;
-    RaycastHit hit;
     RaycastHit hit1;
-    public List<UnitController> selectedUnits = new List<UnitController>();
-    Interactable selectedInteractable;
-    bool isDragging = false;
-    Vector3 mousePositon;
+    private List<PlayerUnitController> selectedUnits = new List<PlayerUnitController>();
+    private Interactable selectedInteractable;
+
     public UserInterface displayInventory;
     public UserInterface displayEquipment;
     public UserInterface displayInfo;
@@ -35,26 +33,11 @@ public class PlayerManager : MonoBehaviour
     }
     private void OnEnable()
     {        
-        InputManager.LeftButtonClickDownAction += LeftClickDown;
-        InputManager.LeftButtonClickUpAction += LeftClickUp;
-        InputManager.RightButtonClickDownAction += RightClickDown;
         InputManager.DeSelectUnitAction += DeselectUnits;
     }
     private void OnDisable()
     {        
-        InputManager.LeftButtonClickDownAction -= LeftClickDown;
-        InputManager.LeftButtonClickUpAction -= LeftClickUp;
-        InputManager.RightButtonClickDownAction -= RightClickDown;
         InputManager.DeSelectUnitAction -= DeselectUnits;
-    }
-    private void OnGUI()
-    {
-        if (isDragging)
-        {
-            var rect = ScreenHelper.GetScreenRect(mousePositon, Input.mousePosition);
-            ScreenHelper.DrawScreenRect(rect, new Color(0.8f, 0.8f, 0.95f, 0.1f));
-            ScreenHelper.DrawScreenRectBorder(rect, 1, Color.blue);
-        }
     }
 
     // Update is called once per frame
@@ -82,10 +65,6 @@ public class PlayerManager : MonoBehaviour
         }
     }
     #region alakasiz
-    private bool IsMouseOverUI()
-    {
-        return EventSystem.current.IsPointerOverGameObject();
-    }
 
     private List<Vector3> GetPositionListAround(Vector3 startPosition, float[] ringDistanceArray, int[] ringPositionCountArray)
     {
@@ -130,13 +109,12 @@ public class PlayerManager : MonoBehaviour
         return Quaternion.Euler(0, angle, 0) * vec;
     }
     #endregion
-    private void SelectUnit(UnitController unit, bool isMultiSelect = false)
+    public void SelectUnit(PlayerUnitController unit, bool isMultiSelect = false)
     {
         if (!isMultiSelect)
         {
             DeselectUnits();
         }
-
         if (unit.isSelected())
         {
             selectedUnits.RemoveAll(u => u == unit);
@@ -150,7 +128,19 @@ public class PlayerManager : MonoBehaviour
 
         InventoryDisplay();
     }
-    private void SelectInteractable(Interactable interactable)
+    public void SelectUnits(PlayerUnitController[] playerUnits , bool isMultiSelection = false)
+    {
+        if (!isMultiSelection)
+        {
+            if (selectedUnits.Count > 0) DeselectUnits();
+        }
+        foreach (PlayerUnitController playerUnit in playerUnits)
+        {
+            if (playerUnit.isSelected()) return;
+            SelectUnit(playerUnit, true);
+        }
+    }
+    public void SelectInteractable(Interactable interactable)
     {
         if (selectedInteractable != null)
         {
@@ -168,7 +158,6 @@ public class PlayerManager : MonoBehaviour
         {
             interactable.OpenInteractMenu(true, true);
         }
-
 
     }
 
@@ -201,7 +190,7 @@ public class PlayerManager : MonoBehaviour
         
     }
 
-    public void DeselectUnit(UnitController unit)
+    public void DeselectUnit(PlayerUnitController unit)
     {
         selectedUnits.RemoveAll(u => u == unit);
         unit.SetSelected(false);
@@ -210,7 +199,7 @@ public class PlayerManager : MonoBehaviour
 
     public void DeselectUnits()
     {
-        foreach (UnitController unit in selectedUnits)
+        foreach (PlayerUnitController unit in selectedUnits)
         {
             unit.SetSelected(false);
         }
@@ -218,7 +207,7 @@ public class PlayerManager : MonoBehaviour
         InventoryDisplay();
     }
 
-    private void DeselectInteractable()
+    public void DeselectInteractable()
     {
         if (selectedInteractable != null)
         {
@@ -228,16 +217,6 @@ public class PlayerManager : MonoBehaviour
             selectedInteractable = null;
         }
 
-    }
-
-    private bool IsWithinSelectionBounds(Transform transform)
-    {
-        if (!isDragging)
-        {
-            return false;
-        }
-        var viewportBounds = ScreenHelper.GetViewportBounds(cameraMain, mousePositon, Input.mousePosition);
-        return viewportBounds.Contains(cameraMain.WorldToViewportPoint(transform.position));
     }
 
     private void pouseText()
@@ -253,145 +232,94 @@ public class PlayerManager : MonoBehaviour
 
     }
 
-    public void LeftClickDown()
-    {
-        if (!IsMouseOverUI())
-        {
-            if (selectedInteractable != null)
-            {
-                DeselectInteractable();
-            }
-            mousePositon = Input.mousePosition;
-            //Create a ray from the camera to our space
-            var camRay = cameraMain.ScreenPointToRay(Input.mousePosition);
-            //Shoot that ray and get the hit data
-            if (Physics.Raycast(camRay, out hit))
-            {
-                //Do something with that data 
 
-                //Debug.Log(hit.transform.tag);
-                if (hit.transform.CompareTag("PlayerUnit"))
-                {
-                    SelectUnit(hit.transform.GetComponent<UnitController>(), Input.GetKey(KeyCode.LeftShift));
-                }
-                else if (hit.transform.CompareTag("Interactable"))
-                {
-                    SelectInteractable(hit.transform.GetComponent<Interactable>());
+    //public void RightClickDown()
+    //{
+    //    if (selectedUnits.Count > 0)
+    //    {
+    //        if (!EventSystem.current.IsPointerOverGameObject())
+    //        {
+    //            var camRay = cameraMain.ScreenPointToRay(Input.mousePosition);
+    //            //Shoot that ray and get the hit data
+    //            if (Physics.Raycast(camRay, out hit))
+    //            {
 
-                }
-                else
-                {
-                    isDragging = true;
-                }
-            }
-        }
+    //                if (selectedInteractable != null && !hit.transform.CompareTag("Interactable"))
+    //                {
+    //                    DeselectInteractable();
+    //                }
+    //                //Do something with that data                 
+    //                if (hit.transform.CompareTag("Ground"))
+    //                {
+    //                    List<Vector3> targetPositionList = GetPositionListAround(hit.point, new float[] { 1.6f, 3.2f, 4.8f, 6.4f, 8f }, new int[] { 5, 10, 15, 20, 25 });
+    //                    List<Vector3> arrangedTargetPositionList = new List<Vector3>();
+    //                    for (int i = 0; i < selectedUnits.Count; i++)
+    //                    {
+    //                        arrangedTargetPositionList.Add(targetPositionList[i]);
+    //                    }
+    //                    arrangedTargetPositionList.Reverse();
+    //                    var targetPositionListIndex = 0;
+    //                    foreach (var selectableObj in selectedUnits)
+    //                    {
+    //                        selectableObj.MoveUnit(arrangedTargetPositionList[targetPositionListIndex]);
+    //                        targetPositionListIndex = (targetPositionListIndex + 1) % arrangedTargetPositionList.Count;
+    //                        if (selectableObj.IsGathering())
+    //                        {
+    //                            selectableObj.stopGather();
+    //                        }
 
-    }
+    //                    }
+    //                }
+    //                else if (hit.transform.CompareTag("EnemyUnit"))
+    //                {
+    //                    foreach (var selectableObj in selectedUnits)
+    //                    {
+    //                        selectableObj.SetNewTarget(hit.transform);
+    //                        if (selectableObj.IsGathering())
+    //                        {
+    //                            selectableObj.stopGather();
+    //                        }
+    //                    }
+    //                }
+    //                else if (hit.transform.CompareTag("Interactable"))
+    //                {
+    //                    Interactable _selectedInteractable = hit.transform.GetComponent<Interactable>();
+    //                    for (int i = 0; i < selectedUnits.Count; i++)
+    //                    {
+    //                        if (_selectedInteractable.getCurrentAmount() > 0)
+    //                        {
 
-    public void LeftClickUp()
-    {
-        if (isDragging)
-        {
-            DeselectUnits();
-            foreach (var selectableObject in FindObjectsOfType<PlayerUnitController>())
-            {
-                if (IsWithinSelectionBounds(selectableObject.transform))
-                {
-                    SelectUnit(selectableObject.gameObject.GetComponent<UnitController>(), true);
-                }
-            }
+    //                            if (selectedUnits[i].getUnitInventory().calculateFull(_selectedInteractable.item) == false)
+    //                            {
+    //                                if (_selectedInteractable.takeInteractSlot())
+    //                                {
+    //                                    selectedUnits[i].SetFocus(_selectedInteractable.gameObject.transform);
+    //                                    selectedUnits[i].startGather(_selectedInteractable);
+    //                                    DeselectUnit(selectedUnits[i]);
+    //                                    i--;
+    //                                }
+    //                            }
 
-            isDragging = false;
-        }
-    }
+    //                        }
+    //                    }
+    //                    _selectedInteractable = null;
+    //                }
+    //                else if (hit.transform.CompareTag("Item"))
+    //                {
+    //                    if (selectedUnits[0].getUnitInventory().calculateFull(hit.transform.GetComponent<groundItem>().item) == false)
+    //                    {
+    //                        selectedUnits[0].GetItem(hit.transform);
+    //                        if (selectedUnits.Count > 1)
+    //                        {
+    //                            DeselectUnit(selectedUnits[0]);
+    //                        }
+    //                    }
 
-    public void RightClickDown()
-    {
-        if (selectedUnits.Count > 0)
-        {
-            if (!EventSystem.current.IsPointerOverGameObject())
-            {
-                var camRay = cameraMain.ScreenPointToRay(Input.mousePosition);
-                //Shoot that ray and get the hit data
-                if (Physics.Raycast(camRay, out hit))
-                {
+    //                }
+    //            }
+    //        }
 
-                    if (selectedInteractable != null && !hit.transform.CompareTag("Interactable"))
-                    {
-                        DeselectInteractable();
-                    }
-                    //Do something with that data                 
-                    if (hit.transform.CompareTag("Ground"))
-                    {
-                        List<Vector3> targetPositionList = GetPositionListAround(hit.point, new float[] { 1.6f, 3.2f, 4.8f, 6.4f, 8f }, new int[] { 5, 10, 15, 20, 25 });
-                        List<Vector3> arrangedTargetPositionList = new List<Vector3>();
-                        for (int i = 0; i < selectedUnits.Count; i++)
-                        {
-                            arrangedTargetPositionList.Add(targetPositionList[i]);
-                        }
-                        arrangedTargetPositionList.Reverse();
-                        var targetPositionListIndex = 0;
-                        foreach (var selectableObj in selectedUnits)
-                        {
-                            selectableObj.MoveUnit(arrangedTargetPositionList[targetPositionListIndex]);
-                            targetPositionListIndex = (targetPositionListIndex + 1) % arrangedTargetPositionList.Count;
-                            if (selectableObj.IsGathering())
-                            {
-                                selectableObj.stopGather();
-                            }
-
-                        }
-                    }
-                    else if (hit.transform.CompareTag("EnemyUnit"))
-                    {
-                        foreach (var selectableObj in selectedUnits)
-                        {
-                            selectableObj.SetNewTarget(hit.transform);
-                            if (selectableObj.IsGathering())
-                            {
-                                selectableObj.stopGather();
-                            }
-                        }
-                    }
-                    else if (hit.transform.CompareTag("Interactable"))
-                    {
-                        Interactable _selectedInteractable = hit.transform.GetComponent<Interactable>();
-                        for (int i = 0; i < selectedUnits.Count; i++)
-                        {
-                            if (_selectedInteractable.getCurrentAmount() > 0)
-                            {
-
-                                if (selectedUnits[i].getUnitInventory().calculateFull(_selectedInteractable.item) == false)
-                                {
-                                    if (_selectedInteractable.takeInteractSlot())
-                                    {
-                                        selectedUnits[i].SetFocus(_selectedInteractable.gameObject.transform);
-                                        selectedUnits[i].startGather(_selectedInteractable);
-                                        DeselectUnit(selectedUnits[i]);
-                                        i--;
-                                    }
-                                }
-
-                            }
-                        }
-                        _selectedInteractable = null;
-                    }
-                    else if (hit.transform.CompareTag("Item"))
-                    {
-                        if (selectedUnits[0].getUnitInventory().calculateFull(hit.transform.GetComponent<groundItem>().item) == false)
-                        {
-                            selectedUnits[0].GetItem(hit.transform);
-                            if (selectedUnits.Count > 1)
-                            {
-                                DeselectUnit(selectedUnits[0]);
-                            }
-                        }
-
-                    }
-                }
-            }
-
-        }
-    }
+    //    }
+    //}
 
 }
