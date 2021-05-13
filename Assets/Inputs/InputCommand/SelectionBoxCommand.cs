@@ -24,28 +24,28 @@ public class SelectionBoxCommand : Command
         {
             isDragging = false;
             var camRay = cameraMain.ScreenPointToRay(vector2);
-                RaycastHit hit;
-                
-                if (Physics.Raycast(camRay, out hit))
-                {
-                    
-                    hit.transform.TryGetComponent<GroundIneraction>(out GroundIneraction ground);
-                                        
-                    if (ground == null) return;
-                    mouseEndPosition = vector2;
-                    mouseStartPositon = vector2;
-                    isDragging = true;
-                
-                }
-            
+            RaycastHit hit;
+
+            if (Physics.Raycast(camRay, out hit))
+            {
+
+                hit.transform.TryGetComponent<GroundIneraction>(out GroundIneraction ground);
+
+                if (ground == null) return;
+                mouseEndPosition = vector2;
+                mouseStartPositon = vector2;
+                isDragging = true;
+
+            }
+
         }
     }
 
     public override void EndWithVector2(Vector2 vector2, bool isMultiSelection)
     {
         if (!isDragging) return;
-        List<PlayerUnitController> playerUnitControllers =new List<PlayerUnitController>();
-        var viewportBounds = ScreenHelper.GetViewportBounds(cameraMain, mouseStartPositon, vector2);        
+        List<PlayerUnitController> playerUnitControllers = new List<PlayerUnitController>();
+        var viewportBounds = ScreenHelper.GetViewportBounds(cameraMain, mouseStartPositon, vector2);
         //DeselectUnits();
         foreach (var selectableObject in FindObjectsOfType<PlayerUnitController>())
         {
@@ -54,20 +54,20 @@ public class SelectionBoxCommand : Command
                 playerUnitControllers.Add(selectableObject.GetComponent<PlayerUnitController>());
             }
         }
-        if(!isMultiSelection) playerManager.DeselectUnits();
-        if(!isMultiSelection && playerUnitControllers.Count <=0) playerManager.DeselectInteractable();
-        if (playerUnitControllers.Count > 0) playerManager.SelectUnits(playerUnitControllers.ToArray(),isMultiSelection);
+        if (!isMultiSelection) playerManager.DeselectUnits();
+        if (!isMultiSelection && playerUnitControllers.Count <= 0) playerManager.DeselectInteractable();
+        if (playerUnitControllers.Count > 0) playerManager.SelectUnits(playerUnitControllers.ToArray(), isMultiSelection);
         isDragging = false;
-        
+
     }
     private void OnGUI()
     {
         if (!isDragging) return;
-        
-            var rect = ScreenHelper.GetScreenRect(mouseStartPositon, mouseEndPosition);
-            ScreenHelper.DrawScreenRect(rect, new Color(0.8f, 0.8f, 0.95f, 0.1f));
-            ScreenHelper.DrawScreenRectBorder(rect, 1, Color.blue);
-        
+
+        var rect = ScreenHelper.GetScreenRect(mouseStartPositon, mouseEndPosition);
+        ScreenHelper.DrawScreenRect(rect, new Color(0.8f, 0.8f, 0.95f, 0.1f));
+        ScreenHelper.DrawScreenRectBorder(rect, 1, Color.blue);
+
     }
 
     private bool IsMouseOverUI()
@@ -80,5 +80,5 @@ public class SelectionBoxCommand : Command
         if (!isDragging) return;
         mouseEndPosition = vector2;
     }
-    
+
 }

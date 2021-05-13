@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -902,7 +902,7 @@ MonoBehaviour:
   zoomSpeed: 100
   minZoom: 0
   maxZoom: 30
-  lerpTime: 1
+  cameraOffset: {fileID: 219818113}
 --- !u!114 &167664789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -950,6 +950,7 @@ GameObject:
   m_Component:
   - component: {fileID: 219818112}
   - component: {fileID: 219818111}
+  - component: {fileID: 219818113}
   m_Layer: 0
   m_Name: CM vcam1
   m_TagString: Untagged
@@ -1007,6 +1008,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &219818113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219818110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44d70cc20219cd84593f67d248eafe36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Offset: {x: 0, y: 0, z: 0}
+  m_ApplyAfter: 0
+  m_PreserveComposition: 0
 --- !u!1 &294098487
 GameObject:
   m_ObjectHideFlags: 0
@@ -1168,6 +1184,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e92b398aeb59fd48976a46ba9972dec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!195 &365327883 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 3615239253745256907, guid: 078b95fab8fe7e148a40adeea01b6c52, type: 3}
+  m_PrefabInstance: {fileID: 392589556}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &392589556
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1223,6 +1244,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemyPrefab
       objectReference: {fileID: 0}
+    - target: {fileID: 6039230327660438141, guid: 078b95fab8fe7e148a40adeea01b6c52, type: 3}
+      propertyPath: navAgent
+      value: 
+      objectReference: {fileID: 365327883}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 078b95fab8fe7e148a40adeea01b6c52, type: 3}
 --- !u!1 &405891671

@@ -5,11 +5,11 @@ using UnityEngine;
 public class RotationCommand : Command
 {
     [SerializeField]
-    private float rotationSpeed =5;
+    private float rotationSpeed = 5;
     private bool isRotating;
     private Vector2 mouseStartPositon;
     private Vector2 mouseEndPosition;
-    
+
     private Quaternion newRotation;
     public override void ExecuteWithVector2(Vector2 vector2, bool isMultiSelection)
     {
@@ -17,10 +17,11 @@ public class RotationCommand : Command
         mouseEndPosition = vector2;
         mouseStartPositon = vector2;
         isRotating = true;
+
     }
     public override void EndWithVector2(Vector2 vector2, bool isMultiSelection)
     {
-        isRotating = false;        
+        isRotating = false;
     }
 
     public override void DragWithVector2(Vector2 vector2)
