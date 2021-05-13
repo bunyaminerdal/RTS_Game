@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class UnitCreateManager : MonoBehaviour
 {
-    public static UnitCreateManager Instance;
 
     [SerializeField]
     private GameObject GarbagePrefab;
@@ -54,15 +53,7 @@ public class UnitCreateManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+
         interactableList = new List<InteractableBasics>();
         InteractableBasics interact1 = new InteractableBasics("cop1", "Garbage", new Vector3(10f, 0f, 0f), new Vector3(0f, 0f, 0f), 4f, 0f);
         InteractableBasics interact2 = new InteractableBasics("cop2", "TrashBin", new Vector3(20f, 0f, 0f), new Vector3(0f, 0f, 0f), 0f, 10f);

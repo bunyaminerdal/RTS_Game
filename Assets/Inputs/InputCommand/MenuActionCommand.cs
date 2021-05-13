@@ -6,6 +6,10 @@ public class MenuActionCommand : Command
 {
     bool isOpened = true;
     float timeScaleNow1;
+    private void Awake()
+    {
+        MenuEventHandler.ResumeButtonClicked.AddListener(Execute);
+    }
     public override void Execute()
     {
         GameObject.Find("CanvasMenu").transform.GetChild(0).gameObject.SetActive(isOpened);
@@ -14,7 +18,6 @@ public class MenuActionCommand : Command
             timeScaleNow1 = Time.timeScale;
             Time.timeScale = 0;
             isOpened = false;
-
         }
         else
         {

@@ -5,7 +5,6 @@ using UnityEngine.EventSystems;
 
 public class PlayerManager : MonoBehaviour
 {
-    public static PlayerManager Instance;
     private Camera cameraMain;
     RaycastHit hit1;
     private List<PlayerUnitController> selectedUnits = new List<PlayerUnitController>();
@@ -16,24 +15,15 @@ public class PlayerManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = null;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
         cameraMain = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
     }
     private void OnEnable()
     {
-        InputManager.DeSelectUnitAction += DeselectUnits;
+        UnitFrameEventHandler.UnitFrameClicked.AddListener(UnitFrameClicked);
     }
     private void OnDisable()
     {
-        InputManager.DeSelectUnitAction -= DeselectUnits;
+        UnitFrameEventHandler.UnitFrameClicked.RemoveListener(UnitFrameClicked);
     }
 
     // Update is called once per frame
@@ -43,7 +33,17 @@ public class PlayerManager : MonoBehaviour
         pouseText();
 
     }
-
+    private void UnitFrameClicked(PlayerUnitController unit)
+    {
+        if (unit.isSelected() == false)
+        {
+            SelectUnit(unit);
+        }
+        else
+        {
+            DeselectUnit(unit);
+        }
+    }
     private void InventoryDisplay()
     {
         if (selectedUnits.Count == 1)

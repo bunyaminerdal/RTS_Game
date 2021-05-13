@@ -12,8 +12,9 @@ public class SaveManager : MonoBehaviour
     private Interactable[] interacts;
     private GameObject camRig;
     private GameObject cam;
+    private UnitCreateManager unitCreateManager;
 
-    public List<GameData> gameDataList{ get; private set; }
+    public List<GameData> gameDataList { get; private set; }
 
     private void Awake()
     {
@@ -29,16 +30,18 @@ public class SaveManager : MonoBehaviour
         //TODO: Bu kısmı değiştirelim
         camRig = GameObject.Find("Camera Rig");
         cam = GameObject.Find("Main Camera");
+
+        unitCreateManager = transform.GetComponent<UnitCreateManager>();
     }
     private void OnEnable()
     {
-        InputManager.QuickSaveAction += QuickSave;
-        InputManager.QuickLoadAction += QuickLoad;
+        MenuEventHandler.QuickSaveClicked.AddListener(QuickSave);
+        MenuEventHandler.QuickLoadClicked.AddListener(QuickLoad);
     }
     private void OnDisable()
     {
-        InputManager.QuickSaveAction -= QuickSave;
-        InputManager.QuickLoadAction -= QuickLoad;
+        MenuEventHandler.QuickSaveClicked.RemoveListener(QuickSave);
+        MenuEventHandler.QuickLoadClicked.RemoveListener(QuickLoad);
     }
     void Start()
     {
@@ -55,7 +58,7 @@ public class SaveManager : MonoBehaviour
         }
 
 
-        
+
     }
 
     public void Save(string gameName)
@@ -101,7 +104,7 @@ public class SaveManager : MonoBehaviour
 
     public void Load(string gameName)
     {
-        
+
         try
         {
             BinaryFormatter bf = new BinaryFormatter();
@@ -122,6 +125,7 @@ public class SaveManager : MonoBehaviour
 
     public void QuickSave()
     {
+        Debug.Log("quicksave");
         //TODO: bu kısım için başka bir şey düşünelim
         units = GameObject.Find("UnitCollector").GetComponentsInChildren<PlayerUnitController>();
         interacts = GameObject.Find("InteractableCollector").GetComponentsInChildren<Interactable>();
@@ -137,17 +141,17 @@ public class SaveManager : MonoBehaviour
             bf.Serialize(file, data);
 
             file.Close();
-            bool autosavevar = false;
+            bool haveAutoSaveFile = false;
             //autosave i game data ya saveliyoruz
             for (int i = 0; i < gameDataList.Count; i++)
             {
                 if (gameDataList[i].gameName == "QuickSave")
                 {
-                    autosavevar = true;
+                    haveAutoSaveFile = true;
                     gameDataList[i].gameTime = DateTime.Now.ToString();
                 }
             }
-            if (!autosavevar)
+            if (!haveAutoSaveFile)
             {
                 gameDataList.Add(new GameData("QuickSave", DateTime.Now.ToString()));
             }
@@ -163,14 +167,14 @@ public class SaveManager : MonoBehaviour
 
     private void SaveUnit(SaveData data)
     {
-        data.myControllerData = new ControllerData(Time.timeScale,
-        camRig.transform.position.x,
-        camRig.transform.position.y,
-        camRig.transform.position.z,
-        camRig.transform.eulerAngles.y,
-        cam.transform.localPosition.y,
-        cam.transform.localPosition.z
-        );
+        // data.myControllerData = new ControllerData(Time.timeScale,
+        // camRig.transform.position.x,
+        // camRig.transform.position.y,
+        // camRig.transform.position.z,
+        // camRig.transform.eulerAngles.y,
+        // cam.transform.localPosition.y,
+        // cam.transform.localPosition.z
+        // );
         for (int i = 0; i < interacts.Length; i++)
         {
 
@@ -317,11 +321,11 @@ public class SaveManager : MonoBehaviour
     }
     private void LoadUnit(SaveData data)
     {
-        //camera and controller load
-        Time.timeScale = data.myControllerData.pause;
-        CameraController.Instance.loadPosition = new Vector3(data.myControllerData.positionx, data.myControllerData.positiony, data.myControllerData.positionz);
-        CameraController.Instance.loadRotation = new Vector3(0, data.myControllerData.rigRotationy, 0);
-        CameraController.Instance.loadZoom = new Vector3(0, data.myControllerData.camPositiony, data.myControllerData.camPositionz);
+        // //camera and controller load
+        // Time.timeScale = data.myControllerData.pause;
+        // CameraController.Instance.loadPosition = new Vector3(data.myControllerData.positionx, data.myControllerData.positiony, data.myControllerData.positionz);
+        // CameraController.Instance.loadRotation = new Vector3(0, data.myControllerData.rigRotationy, 0);
+        // CameraController.Instance.loadZoom = new Vector3(0, data.myControllerData.camPositiony, data.myControllerData.camPositionz);
 
         ClickMarker[] clicks = GameObject.Find("clickMakerTransform").GetComponentsInChildren<ClickMarker>();
         foreach (ClickMarker click in clicks)
@@ -339,31 +343,31 @@ public class SaveManager : MonoBehaviour
         {
             Destroy(GameObject.Find(interact.interactableName));
             InteractableBasics loadingInteract = new InteractableBasics(interact.interactableName, interact.interactableType, new Vector3(interact.positionx, interact.positiony, interact.positionz), new Vector3(interact.rotationx, interact.rotationy, interact.rotationz), interact.currentAmount, interact.spawnTimer);
-            UnitCreateManager.Instance.interactableList.Add(loadingInteract);
+            unitCreateManager.interactableList.Add(loadingInteract);
         }
         foreach (UnitData unit in data.myUnitsData)
         {
             Destroy(GameObject.Find(unit.unitName));
             UnitBasics loadingUnit = new UnitBasics(unit.unitName, unit.unitType, new Vector3(unit.positionx, unit.positiony, unit.positionz), new Vector3(unit.rotationx, unit.rotationy, unit.rotationz), false, new Vector3(unit.destinationx, unit.destinationy, unit.destinationz), unit.interactName);
-            UnitCreateManager.Instance.unitList.Add(loadingUnit);
+            unitCreateManager.unitList.Add(loadingUnit);
         }
 
         foreach (InventoryData inventory in data.myInventoryData)
         {
             InventoryBasics loadingInventory = new InventoryBasics(inventory.inventoryName, inventory.unitName);
-            UnitCreateManager.Instance.inventoryList.Add(loadingInventory);
+            unitCreateManager.inventoryList.Add(loadingInventory);
         }
         foreach (ItemData item in data.myItemData)
         {
             ItemBasics loadingItem = new ItemBasics(item.itemId, item.itemName, item.itemtype, item.itemAmount, item.inventoryName, item.slotId);
-            UnitCreateManager.Instance.itemList.Add(loadingItem);
+            unitCreateManager.itemList.Add(loadingItem);
         }
         foreach (ItemAttributeData itemAttribute in data.myItemAttributeData)
         {
             ItemAttributeBasics loadingItemAttribute = new ItemAttributeBasics(itemAttribute.itemId, itemAttribute.attributeName, itemAttribute.attributeValue, itemAttribute.attributeMin, itemAttribute.attributeMax);
-            UnitCreateManager.Instance.itemAttributeList.Add(loadingItemAttribute);
+            unitCreateManager.itemAttributeList.Add(loadingItemAttribute);
         }
-        UnitCreateManager.Instance.CreatorFunc();
+        unitCreateManager.CreatorFunc();
     }
 
 }

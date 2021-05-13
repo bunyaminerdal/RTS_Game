@@ -8,7 +8,7 @@ public class PauseCommand : Command
     public override void Execute()
     {
         if (Time.deltaTime > 0)
-        {            
+        {
             currentTime = Time.timeScale;
             Time.timeScale = 0;
         }
@@ -16,6 +16,6 @@ public class PauseCommand : Command
         {
             Time.timeScale = currentTime;
         }
-        
+
     }
 }

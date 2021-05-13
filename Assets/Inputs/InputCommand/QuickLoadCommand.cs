@@ -6,6 +6,6 @@ public class QuickLoadCommand : Command
 {
     public override void Execute()
     {
-        
+        MenuEventHandler.QuickLoadClicked?.Invoke();
     }
 }

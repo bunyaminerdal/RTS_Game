@@ -22,15 +22,14 @@ public class GameMenuController : MonoBehaviour
 
     public void resumeBttn()
     {
-        InputManager.Instance.IsGameMenuOpened(false);
-        GameObject.Find("CanvasMenu").transform.GetChild(0).gameObject.SetActive(false);
+        MenuEventHandler.ResumeButtonClicked?.Invoke();
     }
 
     public void saveMenuBttn()
     {
         SaveMenuOpenerInput(true);
     }
-    
+
     public void saveGameBackButton()
     {
         SaveMenuOpenerInput(false);
@@ -52,7 +51,7 @@ public class GameMenuController : MonoBehaviour
     }
     public void LoadMenuOpenerInput(bool isOpened)
     {
-        
+
         SaveManager.Instance.LoadGameData();
         loadMenuOpener(isOpened);
         GameObject.Find("CanvasMenu").transform.GetChild(0).gameObject.SetActive(!isOpened);

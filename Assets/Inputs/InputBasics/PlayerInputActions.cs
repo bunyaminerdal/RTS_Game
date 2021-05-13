@@ -88,7 +88,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""id"": ""2c517b7a-138f-4380-b532-b9d92fdb2390"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """"
+                    ""interactions"": ""Press""
                 },
                 {
                     ""name"": ""QuickLoadAction"",
@@ -96,7 +96,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""id"": ""a2201026-a3c4-4447-a195-9dd21ece4003"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """"
+                    ""interactions"": ""Press""
                 },
                 {
                     ""name"": ""Rotation"",

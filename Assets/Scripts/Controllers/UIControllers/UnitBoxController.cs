@@ -5,55 +5,44 @@ using UnityEngine.UI;
 using TMPro;
 
 public class UnitBoxController : MonoBehaviour
-{    
-    private Dictionary<PlayerUnitController,GameObject> imagedict;
+{
+    private Dictionary<PlayerUnitController, GameObject> imagedict;
     public GameObject unitImage;
     private GridLayoutGroup gridLayoutGroup;
     private GameObject newunitImage;
     private Button unitselectButton;
-    private PlayerManager playerManager;
+
 
 
     // Start is called before the first frame update
     void Awake()
     {
-        playerManager = PlayerManager.Instance;
         gridLayoutGroup = transform.GetComponent<GridLayoutGroup>();
         imagedict = new Dictionary<PlayerUnitController, GameObject>();
 
 
     }
 
- 
+
     public void onUnitSelected(PlayerUnitController unit, bool isSelected)
     {
         imagedict.TryGetValue(unit, out newunitImage);
         newunitImage.transform.GetChild(0).gameObject.SetActive(isSelected);
 
-    }    
-    void TaskOnClick(PlayerUnitController unit){
+    }
 
-        //TODO: bu kısımda event ya da action kullanılabilir.
-        if (playerManager == null) return;
-        if(unit.isSelected()==false)
-        {
-            
-           playerManager.SelectUnit(unit);
-           //unit.SetSelected(true);
-        }else if(unit.isSelected()==true)
-        {
-            unit.SetSelected(false);
-            playerManager.DeselectUnit(unit);
-        }
-	}
 
-     public void onUnitCreated(PlayerUnitController unit)
-    {        
+    public void onUnitCreated(PlayerUnitController unit)
+    {
         newunitImage = Instantiate(unitImage, transform);
         TMP_Text text1 = newunitImage.transform.GetChild(2).GetComponent<TMP_Text>();
         text1.text = unit.unitName;
         unitselectButton = newunitImage.GetComponentInChildren<Button>();
-        unitselectButton.onClick.AddListener(delegate { TaskOnClick(unit); });
+        //unitselectButton.onClick.AddListener(delegate { TaskOnClick(unit); });
+        unitselectButton.onClick.AddListener(() =>
+        {
+            UnitFrameEventHandler.UnitFrameClicked?.Invoke(unit);
+        });
 
         imagedict.Add(unit, newunitImage);
         if (imagedict.Count <= 8)

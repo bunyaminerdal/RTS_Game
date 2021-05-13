@@ -6,5 +6,6 @@ public class QuickSaveCommand : Command
 {
     public override void Execute()
     {
+        MenuEventHandler.QuickSaveClicked?.Invoke();
     }
 }

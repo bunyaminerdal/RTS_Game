@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class NewInputManager : MonoBehaviour ,
+public class NewInputManager : MonoBehaviour,
     IInteractInput, ISelectionInput, ISelectionBoxInput,
     IPauseInput, IMenuActionInput, IQuickSaveInput,
     IQuickLoadInput, IMovementInput,
@@ -66,9 +66,15 @@ public class NewInputManager : MonoBehaviour ,
         playerInputActions.Player.ZoomAction.performed += ZoomAction_performed;
         playerInputActions.Player.Rotation.performed += Rotation_performed;
         playerInputActions.Player.MultiSelection.performed += MultiSelection_performed;
+
+        MenuEventHandler.ResumeButtonClicked.AddListener(MenuActionRequest);
+
     }
 
-
+    private void MenuActionRequest()
+    {
+        isPressingMenuAction = false;
+    }
 
     private void OnDisable()
     {
@@ -85,10 +91,13 @@ public class NewInputManager : MonoBehaviour ,
         playerInputActions.Player.MultiSelection.performed -= MultiSelection_performed;
 
         playerInputActions.Disable();
+
+        MenuEventHandler.ResumeButtonClicked.RemoveListener(MenuActionRequest);
     }
     private void Interact_performed(InputAction.CallbackContext context)
     {
-        var value = context.ReadValue<float>() ;        
+        if (isPressingMenuAction) return;
+        var value = context.ReadValue<float>();
         var position = playerInputActions.Player.MousePosition.ReadValue<Vector2>();
         IsPressingInteract = value >= 0.15;
         if (interactInputCommand != null && IsPressingInteract)
@@ -98,8 +107,8 @@ public class NewInputManager : MonoBehaviour ,
     }
     private void Selection_performed(InputAction.CallbackContext context)
     {
-        //Debug.Log("selection");
-        var value = context.ReadValue<float>();        
+        if (isPressingMenuAction) return;
+        var value = context.ReadValue<float>();
         var position = playerInputActions.Player.MousePosition.ReadValue<Vector2>();
         IsPressingSelection = value >= 0.15;
         if (selectionInputCommand != null && IsPressingSelection)
@@ -108,11 +117,12 @@ public class NewInputManager : MonoBehaviour ,
         }
     }
     private void SelectionBox_performed(InputAction.CallbackContext context)
-    {        
+    {
+        if (isPressingMenuAction) return;
         var value = context.ReadValue<float>();
         var position = playerInputActions.Player.MousePosition.ReadValue<Vector2>();
         isPressingSelectionBox = value >= 0.15;
-        
+
         if (selectionBoxInputCommand != null && isPressingSelectionBox)
         {
             selectionBoxInputCommand.ExecuteWithVector2(position);
@@ -122,12 +132,13 @@ public class NewInputManager : MonoBehaviour ,
         else
         {
             playerInputActions.Player.MousePosition.performed -= MousePosition_performed;
-            selectionBoxInputCommand.EndWithVector2(position,isMultiSelection);
+            selectionBoxInputCommand.EndWithVector2(position, isMultiSelection);
             //Debug.Log("selection box end:" + value);
         }
     }
     private void MousePosition_performed(InputAction.CallbackContext context)
     {
+        if (isPressingMenuAction) return;
         if (selectionBoxInputCommand != null && isPressingSelectionBox)
         {
             var value = context.ReadValue<Vector2>();
@@ -141,6 +152,7 @@ public class NewInputManager : MonoBehaviour ,
     }
     private void PauseAction_performed(InputAction.CallbackContext context)
     {
+        if (isPressingMenuAction) return;
         var value = context.ReadValue<float>();
         isPressingPause = value >= 0.15;
 
@@ -151,17 +163,16 @@ public class NewInputManager : MonoBehaviour ,
     }
     private void MenuAction_performed(InputAction.CallbackContext context)
     {
-        var value = context.ReadValue<float>();
-        isPressingMenuAction = value >= 0.15;
-
-        if (menuActionCommand != null && isPressingMenuAction)
+        if (menuActionCommand != null)
         {
+            isPressingMenuAction = !isPressingMenuAction;
             menuActionCommand.Execute();
         }
-       
+
     }
     private void QuickSaveAction_performed(InputAction.CallbackContext context)
     {
+        if (isPressingMenuAction) return;
         var value = context.ReadValue<float>();
         isPressingQuickSave = value >= 0.15;
 
@@ -172,6 +183,7 @@ public class NewInputManager : MonoBehaviour ,
     }
     private void QuickLoadAction_performed(InputAction.CallbackContext context)
     {
+        if (isPressingMenuAction) return;
         var value = context.ReadValue<float>();
         isPressingQuickLoad = value >= 0.15;
 
@@ -181,19 +193,21 @@ public class NewInputManager : MonoBehaviour ,
         }
     }
     private void Movement_performed(InputAction.CallbackContext context)
-    {        
+    {
+        if (isPressingMenuAction) return;
         var _moveDirection = context.ReadValue<Vector2>();
         isPressingMovement = _moveDirection != Vector2.zero;
 
         if (movementCommand != null)
         {
-            moveDirection = new Vector3(_moveDirection.x, 0, _moveDirection.y);            
+            moveDirection = new Vector3(_moveDirection.x, 0, _moveDirection.y);
             movementCommand.ExecuteWithVector3(moveDirection);
-        }        
+        }
     }
     private void ZoomAction_performed(InputAction.CallbackContext context)
     {
-        var value = context.ReadValue<float>();        
+        if (isPressingMenuAction) return;
+        var value = context.ReadValue<float>();
         isPressingZoom = value != 0;
 
         if (zoomCommand != null && isPressingZoom)
@@ -203,6 +217,7 @@ public class NewInputManager : MonoBehaviour ,
     }
     private void Rotation_performed(InputAction.CallbackContext context)
     {
+        if (isPressingMenuAction) return;
         var _rotationAmount = context.ReadValue<float>();
         var position = playerInputActions.Player.MousePosition.ReadValue<Vector2>();
         isPressingRotation = _rotationAmount >= 0.15;
@@ -220,6 +235,6 @@ public class NewInputManager : MonoBehaviour ,
     private void MultiSelection_performed(InputAction.CallbackContext context)
     {
         var value = context.ReadValue<float>();
-        isMultiSelection = value >= 0.15;                
+        isMultiSelection = value >= 0.15;
     }
 }
