@@ -30,23 +30,21 @@ public class ControllerData
     public float positionx;
     public float positiony;
     public float positionz;
-    public float rigRotationy;
-    public float camPositiony;
-    public float camPositionz;
+    public float rotationy;
+    public float virtualCamOffsetZ;
 
 
     public ControllerData(float _pause,
         float _positionx , float _positiony, float _positionz,
-        float _rigRotationy,float _camPositiony,float _camPositionz
+        float _rotationy,float _virtualCamOffsetZ
         )
     {
         pause = _pause;
         positionx = _positionx;
         positiony = _positiony;
         positionz = _positionz;
-        rigRotationy = _rigRotationy;
-        camPositiony = _camPositiony;
-        camPositionz = _camPositionz;        
+        rotationy = _rotationy;
+        virtualCamOffsetZ = _virtualCamOffsetZ;        
     }
 }
 

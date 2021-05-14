@@ -10,11 +10,13 @@ public class SaveManager : MonoBehaviour
 
     private PlayerUnitController[] units;
     private Interactable[] interacts;
-    private GameObject camRig;
-    private GameObject cam;
     private UnitCreateManager unitCreateManager;
+    private Vector3 playerManagerTransform;
+    private float playerManagerRotationY;
+    private float virtualCamOffset;
 
     public List<GameData> gameDataList { get; private set; }
+
 
     private void Awake()
     {
@@ -27,21 +29,31 @@ public class SaveManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        //TODO: Bu kısmı değiştirelim
-        camRig = GameObject.Find("Camera Rig");
-        cam = GameObject.Find("Main Camera");
+  
 
         unitCreateManager = transform.GetComponent<UnitCreateManager>();
     }
+
+ 
+
     private void OnEnable()
     {
         MenuEventHandler.QuickSaveClicked.AddListener(QuickSave);
         MenuEventHandler.QuickLoadClicked.AddListener(QuickLoad);
+        SaveLoadHandlers.PlayerManagerTransform.AddListener(PlayerManagerTransform);
+        SaveLoadHandlers.PlayerManagerRotationY.AddListener(PlayerManagerRotationY);
+        SaveLoadHandlers.VirtualCamOffset.AddListener(VirtualCamOffset);
     }
+
+
+
     private void OnDisable()
     {
         MenuEventHandler.QuickSaveClicked.RemoveListener(QuickSave);
         MenuEventHandler.QuickLoadClicked.RemoveListener(QuickLoad);
+        SaveLoadHandlers.PlayerManagerTransform.RemoveListener(PlayerManagerTransform);
+        SaveLoadHandlers.PlayerManagerRotationY.RemoveListener(PlayerManagerRotationY);
+        SaveLoadHandlers.VirtualCamOffset.RemoveListener(VirtualCamOffset);
     }
     void Start()
     {
@@ -125,7 +137,7 @@ public class SaveManager : MonoBehaviour
 
     public void QuickSave()
     {
-        Debug.Log("quicksave");
+        
         //TODO: bu kısım için başka bir şey düşünelim
         units = GameObject.Find("UnitCollector").GetComponentsInChildren<PlayerUnitController>();
         interacts = GameObject.Find("InteractableCollector").GetComponentsInChildren<Interactable>();
@@ -167,14 +179,13 @@ public class SaveManager : MonoBehaviour
 
     private void SaveUnit(SaveData data)
     {
-        // data.myControllerData = new ControllerData(Time.timeScale,
-        // camRig.transform.position.x,
-        // camRig.transform.position.y,
-        // camRig.transform.position.z,
-        // camRig.transform.eulerAngles.y,
-        // cam.transform.localPosition.y,
-        // cam.transform.localPosition.z
-        // );
+        data.myControllerData = new ControllerData(Time.timeScale,
+        playerManagerTransform.x,
+        playerManagerTransform.y,
+        playerManagerTransform.z,
+        playerManagerRotationY,
+        virtualCamOffset
+        );
         for (int i = 0; i < interacts.Length; i++)
         {
 
@@ -320,12 +331,7 @@ public class SaveManager : MonoBehaviour
 
     }
     private void LoadUnit(SaveData data)
-    {
-        // //camera and controller load
-        // Time.timeScale = data.myControllerData.pause;
-        // CameraController.Instance.loadPosition = new Vector3(data.myControllerData.positionx, data.myControllerData.positiony, data.myControllerData.positionz);
-        // CameraController.Instance.loadRotation = new Vector3(0, data.myControllerData.rigRotationy, 0);
-        // CameraController.Instance.loadZoom = new Vector3(0, data.myControllerData.camPositiony, data.myControllerData.camPositionz);
+    {       
 
         ClickMarker[] clicks = GameObject.Find("clickMakerTransform").GetComponentsInChildren<ClickMarker>();
         foreach (ClickMarker click in clicks)
@@ -368,6 +374,26 @@ public class SaveManager : MonoBehaviour
             unitCreateManager.itemAttributeList.Add(loadingItemAttribute);
         }
         unitCreateManager.CreatorFunc();
+
+        //camera and controller load
+        Time.timeScale = data.myControllerData.pause;
+        SaveLoadHandlers.PlayerManagerTransformLoad?.Invoke(data.myControllerData.positionx, data.myControllerData.positiony, data.myControllerData.positionz);
+        SaveLoadHandlers.PlayerManagerRotationYLoad?.Invoke(data.myControllerData.rotationy);
+        SaveLoadHandlers.VirtualCamOffsetLoad?.Invoke(data.myControllerData.virtualCamOffsetZ);       
     }
 
+
+    private void PlayerManagerTransform(float arg0, float arg1, float arg2)
+    {
+        playerManagerTransform = new Vector3(arg0, arg1, arg2);
+    }
+
+    private void PlayerManagerRotationY(float arg0)
+    {
+        playerManagerRotationY = arg0;
+    }
+    private void VirtualCamOffset(float arg0)
+    {
+        virtualCamOffset = arg0;
+    }
 }

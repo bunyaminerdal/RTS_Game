@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,7 +11,19 @@ public class RotationCommand : Command
     private Vector2 mouseStartPositon;
     private Vector2 mouseEndPosition;
 
-    private Quaternion newRotation;
+    private void OnEnable()
+    {
+        SaveLoadHandlers.PlayerManagerRotationYLoad.AddListener(PlayerManagerRotationYLoad);
+    }
+    private void OnDisable()
+    {
+        SaveLoadHandlers.PlayerManagerRotationYLoad.RemoveListener(PlayerManagerRotationYLoad);
+    }
+    private void PlayerManagerRotationYLoad(float arg0)
+    {
+        transform.rotation = new Quaternion(transform.rotation.x, arg0, transform.rotation.z,transform.rotation.w);
+    }
+
     public override void ExecuteWithVector2(Vector2 vector2, bool isMultiSelection)
     {
         if (isRotating) return;
@@ -22,6 +35,7 @@ public class RotationCommand : Command
     public override void EndWithVector2(Vector2 vector2, bool isMultiSelection)
     {
         isRotating = false;
+        SaveLoadHandlers.PlayerManagerRotationY?.Invoke(transform.rotation.y);
     }
 
     public override void DragWithVector2(Vector2 vector2)

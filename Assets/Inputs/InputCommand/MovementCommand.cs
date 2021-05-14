@@ -18,12 +18,27 @@ public class MovementCommand : Command
     private void Awake()
     {
         _move = GetComponent<IMovementInput>();
+        
     }
+    private void OnEnable()
+    {
+        SaveLoadHandlers.PlayerManagerTransformLoad.AddListener(PlayerManagerTransformLoad);
+    }
+    private void OnDisable()
+    {
+        SaveLoadHandlers.PlayerManagerTransformLoad.RemoveListener(PlayerManagerTransformLoad);
+    }
+
+    private void PlayerManagerTransformLoad(float arg0, float arg1, float arg2)
+    {
+        transform.position = new Vector3(arg0, arg1, arg2);
+    }
+
     public override void ExecuteWithVector3(Vector3 vector3)
     {
         newPosition = Vector3.zero;
         if(movementCoroutune == null) movementCoroutune = StartCoroutine(Move());
-        
+        SaveLoadHandlers.PlayerManagerTransform?.Invoke(transform.position.x, transform.position.y, transform.position.z);
     }
 
     private IEnumerator Move()
@@ -48,9 +63,11 @@ public class MovementCommand : Command
             {
                 newPosition -= (transform.right / movementSpeed);
             }
-           transform.position += newPosition;
+            transform.position += newPosition;
+            
             yield return null;
         }
+        
         movementCoroutune = null;
     }
 
