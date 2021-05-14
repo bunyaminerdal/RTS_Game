@@ -11,6 +11,8 @@ public class InteractCommand : Command
     {
         cameraMain = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         playerManager = GetComponent<PlayerManager>();
+
+
     }
     public override void ExecuteWithVector2(Vector2 vector2, bool isMultiSelection)
     {
@@ -52,7 +54,6 @@ public class InteractCommand : Command
             }
         }
     }
-
     private bool IsMouseOverUI()
     {
         return EventSystem.current.IsPointerOverGameObject();
