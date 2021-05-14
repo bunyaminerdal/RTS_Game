@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class UnitCreateManager : MonoBehaviour
 {
@@ -38,33 +36,35 @@ public class UnitCreateManager : MonoBehaviour
     private GameObject unitCollector;
     [SerializeField]
     private UnitStats unitStats;
-    public List<InteractableBasics> interactableList { get; private set; }
-    public List<UnitBasics> unitList { get; private set; }
-    public List<InventoryBasics> inventoryList { get; private set; }
-    public List<ItemBasics> itemList { get; private set; }
-    public List<ItemAttributeBasics> itemAttributeList { get; private set; }
+    private InteractableBasics[] interactableList;
+    private UnitBasics[] unitList;
+    private InventoryBasics[] inventoryList;
+    private ItemBasics[] itemList;
+    private ItemAttributeBasics[] itemAttributeList;
 
     private GameObject createdUnit;
     private GameObject unitPrefab;
     private Interactable interactableObject;
 
     private PlayerUnitController[] units;
+    private Interactable[] interactables;
 
     // Start is called before the first frame update
     void Awake()
     {
 
-        interactableList = new List<InteractableBasics>();
+        interactableList = new InteractableBasics[4];
         InteractableBasics interact1 = new InteractableBasics("cop1", "Garbage", new Vector3(10f, 0f, 0f), new Vector3(0f, 0f, 0f), 4f, 0f);
         InteractableBasics interact2 = new InteractableBasics("cop2", "TrashBin", new Vector3(20f, 0f, 0f), new Vector3(0f, 0f, 0f), 0f, 10f);
         InteractableBasics interact3 = new InteractableBasics("cop3", "Garbage", new Vector3(30f, 0f, 0f), new Vector3(0f, 0f, 0f), 6f, 0f);
         InteractableBasics interact4 = new InteractableBasics("cop4", "TrashBin", new Vector3(40f, 0f, 0f), new Vector3(0f, 0f, 0f), 10f, 0f);
-        interactableList.Add(interact1);
-        interactableList.Add(interact2);
-        interactableList.Add(interact3);
-        interactableList.Add(interact4);
+        interactableList[0] = interact1;
+        interactableList[1] = interact2;
+        interactableList[2] = interact3;
+        interactableList[3] = interact4;
 
-        unitList = new List<UnitBasics>();
+
+        unitList = new UnitBasics[7];
         UnitBasics unit1 = new UnitBasics("Ali", "man", new Vector3(0f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(0f, 0.0833f, 0f), "cop1");
         UnitBasics unit2 = new UnitBasics("Cafer", "man1", new Vector3(2f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(2f, 0.0833f, 0f), "No interact");
         UnitBasics unit3 = new UnitBasics("Kamil", "man2", new Vector3(-2f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(2f, 0.0833f, 0f), "cop4");
@@ -73,19 +73,73 @@ public class UnitCreateManager : MonoBehaviour
         UnitBasics unit6 = new UnitBasics("Zilloş", "woman1", new Vector3(8f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(8f, 0.0833f, 0f), "No interact");
         UnitBasics unit7 = new UnitBasics("Zeliha", "woman2", new Vector3(10f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(10f, 0.0833f, 0f), "No interact");
 
+        unitList[0] = unit1;
+        unitList[1] = unit2;
+        unitList[2] = unit3;
+        unitList[3] = unit4;
+        unitList[4] = unit5;
+        unitList[5] = unit6;
+        unitList[6] = unit7;
 
-        unitList.Add(unit1);
-        unitList.Add(unit2);
-        unitList.Add(unit3);
-        unitList.Add(unit4);
-        unitList.Add(unit5);
-        unitList.Add(unit6);
-        unitList.Add(unit7);
-        inventoryList = new List<InventoryBasics>();
-        itemList = new List<ItemBasics>();
-        itemAttributeList = new List<ItemAttributeBasics>();
+        inventoryList = new InventoryBasics[0];
+        itemList = new ItemBasics[0];
+        itemAttributeList = new ItemAttributeBasics[0];
+    }
+    private void OnEnable()
+    {
+        SaveLoadHandlers.SetInteractableBasicsLoadingForCreate.AddListener(InteractableListCreate);
+        SaveLoadHandlers.SetUnitBasicsLoadingForCreate.AddListener(UnitListCreate);
+        SaveLoadHandlers.SetInventoryBasicsLoadingForCreate.AddListener(InventoryListCreate);
+        SaveLoadHandlers.SetItemBasicsLoadingForCreate.AddListener(ItemListCreate);
+        SaveLoadHandlers.SetItemAttBasicsLoadingForCreate.AddListener(ItemAttListCreate);
+        SaveLoadHandlers.CreatorFuncEvent.AddListener(CreatorFunc);
+
+        SaveLoadHandlers.playerUnitCollectorSetUnits.AddListener(GetUnits);
+        SaveLoadHandlers.interactableCollectorSetInteracts.AddListener(GetInteracts);
+
     }
 
+   
+
+    private void OnDisable()
+    {
+        SaveLoadHandlers.SetInteractableBasicsLoadingForCreate.RemoveListener(InteractableListCreate);
+        SaveLoadHandlers.SetUnitBasicsLoadingForCreate.RemoveListener(UnitListCreate);
+        SaveLoadHandlers.SetInventoryBasicsLoadingForCreate.RemoveListener(InventoryListCreate);
+        SaveLoadHandlers.SetItemBasicsLoadingForCreate.RemoveListener(ItemListCreate);
+        SaveLoadHandlers.SetItemAttBasicsLoadingForCreate.RemoveListener(ItemAttListCreate);
+        SaveLoadHandlers.CreatorFuncEvent.RemoveListener(CreatorFunc);
+
+        SaveLoadHandlers.playerUnitCollectorSetUnits.RemoveListener(GetUnits);
+    }
+    private void GetInteracts(Interactable[] arg0)
+    {
+        interactables = arg0;
+    }
+    private void GetUnits(PlayerUnitController[] arg0)
+    {
+        units = arg0;
+    }
+    private void ItemAttListCreate(ItemAttributeBasics[] arg0)
+    {
+        itemAttributeList = arg0;
+    }
+    private void ItemListCreate(ItemBasics[] arg0)
+    {
+        itemList = arg0;
+    }
+    private void InteractableListCreate(InteractableBasics[] arg0)
+    {
+        interactableList = arg0;
+    }
+    private void UnitListCreate(UnitBasics[] arg0)
+    {
+        unitList = arg0;
+    }
+    private void InventoryListCreate(InventoryBasics[] arg0)
+    {
+        inventoryList = arg0;
+    }
     // Update is called once per frame
     void Start()
     {
@@ -95,44 +149,16 @@ public class UnitCreateManager : MonoBehaviour
 
     public void CreatorFunc()
     {
-        CreateInteractable();
-        if (interactableList.Count > 0)
-        {
-            interactableList.Clear();
-        }
+        CreateInteractable();        
         UnitCreate();
-
-        if (unitList.Count > 0)
-        {
-            unitList.Clear();
-        }
-
         CreateInventory();
-
-        if (itemAttributeList.Count > 0)
-        {
-            itemAttributeList.Clear();
-        }
-
-        if (itemList.Count > 0)
-        {
-            itemList.Clear();
-        }
-
-        if (inventoryList.Count > 0)
-        {
-            inventoryList.Clear();
-        }
     }
 
     void UnitCreate()
     {
-        UnitBoxController unitBoxController = FindObjectOfType<UnitBoxController>();
-        if (unitList.Count > 0)
-        {
-            unitBoxController.beforeUnitsCreated();
+        SaveLoadHandlers.UnitFrameClearBeforeUnitCreated?.Invoke();
 
-            for (int i = 0; i < unitList.Count; i++)
+            for (int i = 0; i < unitList.Length; i++)
             {
                 switch (unitList[i].unitType)
                 {
@@ -174,8 +200,8 @@ public class UnitCreateManager : MonoBehaviour
                 PlayerUnitController.unitDestination = unitList[i].destination;
                 if (unitList[i].interactName != "No interact")
                 {
-                    Interactable[] interacts = GameObject.Find("InteractableCollector").GetComponentsInChildren<Interactable>();
-                    foreach (Interactable interact in interacts)
+                SaveLoadHandlers.interactableCollectorGetInteracts?.Invoke();
+                    foreach (Interactable interact in interactables)
                     {
                         if (unitList[i].interactName == interact.interactName)
                         {
@@ -184,18 +210,14 @@ public class UnitCreateManager : MonoBehaviour
                     }
                     PlayerUnitController.unitInteract = interactableObject;
                 }
-
-                unitBoxController.onUnitCreated(PlayerUnitController);
-            }
-
-        }
+            SaveLoadHandlers.UnitFrameClearAfterUnitCreated?.Invoke(PlayerUnitController);
+            }        
     }
 
     void CreateInteractable()
     {
-        if (interactableList.Count > 0)
-        {
-            for (int i = 0; i < interactableList.Count; i++)
+        
+            for (int i = 0; i < interactableList.Length; i++)
             {
                 switch (interactableList[i].interactableType)
                 {
@@ -220,14 +242,13 @@ public class UnitCreateManager : MonoBehaviour
                 interactableProperties.respawnTime = interactableList[i].spawnTimer;
             }
 
-        }
+        
     }
     void CreateInventory()
     {
-        units = GameObject.Find("UnitCollector").GetComponentsInChildren<PlayerUnitController>();
+        SaveLoadHandlers.playerUnitCollectorGetUnits?.Invoke();
         foreach (PlayerUnitController unit in units)
         {
-
             foreach (InventoryBasics inventory in inventoryList)
             {
                 if (unit.unitName == inventory.unitName)

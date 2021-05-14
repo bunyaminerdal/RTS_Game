@@ -30,7 +30,8 @@ public class UnitController : MonoBehaviour {
     public GameObject clickMarker;
     public Interactable interact;
     public Transform clickMarkerTransform;
-
+    [SerializeField]
+    private GameObject selectionMarker;
     private LineRenderer myLineRenderer;
     private bool isUnitSelected;    
     private UnitInventory unitInventory =new UnitInventory(6);
@@ -392,8 +393,9 @@ public class UnitController : MonoBehaviour {
 
     public void SetSelected(bool isSelected)
     {
-        transform.Find("SelectionMarker").gameObject.SetActive(isSelected);
-        isUnitSelected=isSelected;
+        selectionMarker.SetActive(isSelected);
+
+        isUnitSelected =isSelected;
         unitBoxController.onUnitSelected(GetComponent<PlayerUnitController>(), isSelected);
     }
 

@@ -22,7 +22,16 @@ public class UnitBoxController : MonoBehaviour
 
 
     }
-
+    private void OnEnable()
+    {
+        SaveLoadHandlers.UnitFrameClearBeforeUnitCreated.AddListener(beforeUnitsCreated);
+        SaveLoadHandlers.UnitFrameClearAfterUnitCreated.AddListener(onUnitCreated);
+    }
+    private void OnDisable()
+    {
+        SaveLoadHandlers.UnitFrameClearBeforeUnitCreated.RemoveListener(beforeUnitsCreated);
+        SaveLoadHandlers.UnitFrameClearAfterUnitCreated.RemoveListener(onUnitCreated);
+    }
 
     public void onUnitSelected(PlayerUnitController unit, bool isSelected)
     {
@@ -68,7 +77,7 @@ public class UnitBoxController : MonoBehaviour
 
     }
 
-    public void beforeUnitsCreated()
+    private void beforeUnitsCreated()
     {
         foreach (var item in imagedict)
         {

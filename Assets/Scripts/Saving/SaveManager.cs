@@ -14,6 +14,7 @@ public class SaveManager : MonoBehaviour
     private Vector3 playerManagerTransform;
     private float playerManagerRotationY;
     private float virtualCamOffset;
+    private ClickMarker[] clickMarkers;
 
     public List<GameData> gameDataList { get; private set; }
 
@@ -33,9 +34,7 @@ public class SaveManager : MonoBehaviour
 
         unitCreateManager = transform.GetComponent<UnitCreateManager>();
     }
-
- 
-
+    
     private void OnEnable()
     {
         MenuEventHandler.QuickSaveClicked.AddListener(QuickSave);
@@ -43,6 +42,9 @@ public class SaveManager : MonoBehaviour
         SaveLoadHandlers.PlayerManagerTransform.AddListener(PlayerManagerTransform);
         SaveLoadHandlers.PlayerManagerRotationY.AddListener(PlayerManagerRotationY);
         SaveLoadHandlers.VirtualCamOffset.AddListener(VirtualCamOffset);
+        SaveLoadHandlers.playerUnitCollectorSetUnits.AddListener(SetUnits);
+        SaveLoadHandlers.interactableCollectorSetInteracts.AddListener(SetInteracts);
+        SaveLoadHandlers.ClickMarkerCollectorSetMarkers.AddListener(SetClickMarkers);
     }
 
 
@@ -54,6 +56,9 @@ public class SaveManager : MonoBehaviour
         SaveLoadHandlers.PlayerManagerTransform.RemoveListener(PlayerManagerTransform);
         SaveLoadHandlers.PlayerManagerRotationY.RemoveListener(PlayerManagerRotationY);
         SaveLoadHandlers.VirtualCamOffset.RemoveListener(VirtualCamOffset);
+        SaveLoadHandlers.playerUnitCollectorSetUnits.RemoveListener(SetUnits);
+        SaveLoadHandlers.interactableCollectorSetInteracts.RemoveListener(SetInteracts);
+        SaveLoadHandlers.ClickMarkerCollectorSetMarkers.RemoveListener(SetClickMarkers);
     }
     void Start()
     {
@@ -75,9 +80,8 @@ public class SaveManager : MonoBehaviour
 
     public void Save(string gameName)
     {
-
-        units = GameObject.Find("UnitCollector").GetComponentsInChildren<PlayerUnitController>();
-        interacts = GameObject.Find("InteractableCollector").GetComponentsInChildren<Interactable>();
+        SaveLoadHandlers.playerUnitCollectorGetUnits?.Invoke();
+        SaveLoadHandlers.interactableCollectorGetInteracts?.Invoke();        
         try
         {
             BinaryFormatter bf = new BinaryFormatter();
@@ -137,10 +141,8 @@ public class SaveManager : MonoBehaviour
 
     public void QuickSave()
     {
-        
-        //TODO: bu kısım için başka bir şey düşünelim
-        units = GameObject.Find("UnitCollector").GetComponentsInChildren<PlayerUnitController>();
-        interacts = GameObject.Find("InteractableCollector").GetComponentsInChildren<Interactable>();
+        SaveLoadHandlers.playerUnitCollectorGetUnits?.Invoke();
+        SaveLoadHandlers.interactableCollectorGetInteracts?.Invoke();
         try
         {
             BinaryFormatter bf = new BinaryFormatter();
@@ -332,48 +334,61 @@ public class SaveManager : MonoBehaviour
     }
     private void LoadUnit(SaveData data)
     {       
-
-        ClickMarker[] clicks = GameObject.Find("clickMakerTransform").GetComponentsInChildren<ClickMarker>();
-        foreach (ClickMarker click in clicks)
+                
+        SaveLoadHandlers.ClickMarkerCollectorGetMarkers?.Invoke();
+        foreach (ClickMarker click in clickMarkers)
         {
             Destroy(click.gameObject);
         }
 
-        interacts = GameObject.Find("InteractableCollector").GetComponentsInChildren<Interactable>();
-        for (int i = 0; i < interacts.Length; i++)
-        {
-            Destroy(GameObject.Find("CanvasInteractable").transform.GetChild(i).gameObject);
-        }
-
+        List<InteractableBasics> interactableBasicsList = new List<InteractableBasics>();
         foreach (InteractableData interact in data.myInteractsData)
         {
             Destroy(GameObject.Find(interact.interactableName));
             InteractableBasics loadingInteract = new InteractableBasics(interact.interactableName, interact.interactableType, new Vector3(interact.positionx, interact.positiony, interact.positionz), new Vector3(interact.rotationx, interact.rotationy, interact.rotationz), interact.currentAmount, interact.spawnTimer);
-            unitCreateManager.interactableList.Add(loadingInteract);
+            interactableBasicsList.Add(loadingInteract);
         }
+        SaveLoadHandlers.SetInteractableBasicsLoadingForCreate?.Invoke(interactableBasicsList.ToArray());
+        interactableBasicsList.Clear();
+
+        List<UnitBasics> unitBasicsList = new List<UnitBasics>();
         foreach (UnitData unit in data.myUnitsData)
         {
             Destroy(GameObject.Find(unit.unitName));
             UnitBasics loadingUnit = new UnitBasics(unit.unitName, unit.unitType, new Vector3(unit.positionx, unit.positiony, unit.positionz), new Vector3(unit.rotationx, unit.rotationy, unit.rotationz), false, new Vector3(unit.destinationx, unit.destinationy, unit.destinationz), unit.interactName);
-            unitCreateManager.unitList.Add(loadingUnit);
+            unitBasicsList.Add(loadingUnit);
         }
+        SaveLoadHandlers.SetUnitBasicsLoadingForCreate?.Invoke(unitBasicsList.ToArray());
+        unitBasicsList.Clear();
 
+        List<InventoryBasics> inventoryBasicsList = new List<InventoryBasics>();
         foreach (InventoryData inventory in data.myInventoryData)
         {
             InventoryBasics loadingInventory = new InventoryBasics(inventory.inventoryName, inventory.unitName);
-            unitCreateManager.inventoryList.Add(loadingInventory);
+            inventoryBasicsList.Add(loadingInventory);
         }
+        SaveLoadHandlers.SetInventoryBasicsLoadingForCreate?.Invoke(inventoryBasicsList.ToArray());
+        inventoryBasicsList.Clear();
+
+        List<ItemBasics> itemBasicsList = new List<ItemBasics>();
         foreach (ItemData item in data.myItemData)
         {
             ItemBasics loadingItem = new ItemBasics(item.itemId, item.itemName, item.itemtype, item.itemAmount, item.inventoryName, item.slotId);
-            unitCreateManager.itemList.Add(loadingItem);
+            itemBasicsList.Add(loadingItem);
         }
+        SaveLoadHandlers.SetItemBasicsLoadingForCreate?.Invoke(itemBasicsList.ToArray());
+        itemBasicsList.Clear();
+
+        List<ItemAttributeBasics> itemAttBasicsList = new List<ItemAttributeBasics>();
         foreach (ItemAttributeData itemAttribute in data.myItemAttributeData)
         {
             ItemAttributeBasics loadingItemAttribute = new ItemAttributeBasics(itemAttribute.itemId, itemAttribute.attributeName, itemAttribute.attributeValue, itemAttribute.attributeMin, itemAttribute.attributeMax);
-            unitCreateManager.itemAttributeList.Add(loadingItemAttribute);
+            itemAttBasicsList.Add(loadingItemAttribute);
         }
-        unitCreateManager.CreatorFunc();
+        SaveLoadHandlers.SetItemAttBasicsLoadingForCreate?.Invoke(itemAttBasicsList.ToArray());
+        itemAttBasicsList.Clear();
+
+        SaveLoadHandlers.CreatorFuncEvent?.Invoke();        
 
         //camera and controller load
         Time.timeScale = data.myControllerData.pause;
@@ -381,8 +396,18 @@ public class SaveManager : MonoBehaviour
         SaveLoadHandlers.PlayerManagerRotationYLoad?.Invoke(data.myControllerData.rotationy);
         SaveLoadHandlers.VirtualCamOffsetLoad?.Invoke(data.myControllerData.virtualCamOffsetZ);       
     }
-
-
+    private void SetInteracts(Interactable[] arg0)
+    {
+        interacts = arg0;
+    }
+    private void SetUnits(PlayerUnitController[] arg0)
+    {
+        units = arg0;
+    }
+    private void SetClickMarkers(ClickMarker[] arg0)
+    {
+        clickMarkers = arg0;
+    }
     private void PlayerManagerTransform(float arg0, float arg1, float arg2)
     {
         playerManagerTransform = new Vector3(arg0, arg1, arg2);

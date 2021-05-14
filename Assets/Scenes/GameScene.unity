@@ -1086,6 +1086,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 405891672}
+  - component: {fileID: 405891673}
   m_Layer: 0
   m_Name: UnitCollector
   m_TagString: Untagged
@@ -1107,6 +1108,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &405891673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 405891671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11714ff47b8115240924298818fa41fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &413033344
 GameObject:
   m_ObjectHideFlags: 0
@@ -1699,6 +1712,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 986657985}
+  - component: {fileID: 986657986}
   m_Layer: 0
   m_Name: InteractableCollector
   m_TagString: Untagged
@@ -1720,6 +1734,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &986657986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986657984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e193dfb680e031c45bcfc4117c82808f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1010290936
 GameObject:
   m_ObjectHideFlags: 0
@@ -3976,6 +4002,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1885696514}
+  - component: {fileID: 1885696515}
   m_Layer: 0
   m_Name: clickMakerTransform
   m_TagString: Untagged
@@ -3997,6 +4024,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1885696515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1885696513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8d088be97de93f4b940a052e5359d3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1899953859
 PrefabInstance:
   m_ObjectHideFlags: 0

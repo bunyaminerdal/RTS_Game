@@ -205,6 +205,7 @@ MonoBehaviour:
   clickMarker: {fileID: 0}
   interact: {fileID: 0}
   clickMarkerTransform: {fileID: 0}
+  selectionMarker: {fileID: 5184587366679044912}
   unitInventoryStart:
     isFull: 0
   unitEqInventoryStart:
@@ -270,6 +271,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 504fca1dbf5c85942bab1e26e1ce3e19, type: 3}
+--- !u!1 &5184587366679044912 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6144313469328425357, guid: 504fca1dbf5c85942bab1e26e1ce3e19, type: 3}
+  m_PrefabInstance: {fileID: 1348729366260605629}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7086100310175462051 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8133857745411690526, guid: 504fca1dbf5c85942bab1e26e1ce3e19, type: 3}
