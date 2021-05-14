@@ -19,11 +19,13 @@ public class PlayerManager : MonoBehaviour
     }
     private void OnEnable()
     {
+        PlayerEventHandler.DeSelectUnits.AddListener(DeselectUnits);
         UnitFrameEventHandler.UnitFrameClicked.AddListener(UnitFrameClicked);
     }
     private void OnDisable()
     {
         UnitFrameEventHandler.UnitFrameClicked.RemoveListener(UnitFrameClicked);
+        PlayerEventHandler.DeSelectUnits.RemoveListener(DeselectUnits);
     }
 
     // Update is called once per frame

@@ -30,11 +30,11 @@ public class SaveManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-  
+
 
         unitCreateManager = transform.GetComponent<UnitCreateManager>();
     }
-    
+
     private void OnEnable()
     {
         MenuEventHandler.QuickSaveClicked.AddListener(QuickSave);
@@ -44,9 +44,8 @@ public class SaveManager : MonoBehaviour
         SaveLoadHandlers.VirtualCamOffset.AddListener(VirtualCamOffset);
         SaveLoadHandlers.playerUnitCollectorSetUnits.AddListener(SetUnits);
         SaveLoadHandlers.interactableCollectorSetInteracts.AddListener(SetInteracts);
-        SaveLoadHandlers.ClickMarkerCollectorSetMarkers.AddListener(SetClickMarkers);
-    }
 
+    }
 
 
     private void OnDisable()
@@ -58,7 +57,7 @@ public class SaveManager : MonoBehaviour
         SaveLoadHandlers.VirtualCamOffset.RemoveListener(VirtualCamOffset);
         SaveLoadHandlers.playerUnitCollectorSetUnits.RemoveListener(SetUnits);
         SaveLoadHandlers.interactableCollectorSetInteracts.RemoveListener(SetInteracts);
-        SaveLoadHandlers.ClickMarkerCollectorSetMarkers.RemoveListener(SetClickMarkers);
+
     }
     void Start()
     {
@@ -81,7 +80,7 @@ public class SaveManager : MonoBehaviour
     public void Save(string gameName)
     {
         SaveLoadHandlers.playerUnitCollectorGetUnits?.Invoke();
-        SaveLoadHandlers.interactableCollectorGetInteracts?.Invoke();        
+        SaveLoadHandlers.interactableCollectorGetInteracts?.Invoke();
         try
         {
             BinaryFormatter bf = new BinaryFormatter();
@@ -333,13 +332,11 @@ public class SaveManager : MonoBehaviour
 
     }
     private void LoadUnit(SaveData data)
-    {       
-                
-        SaveLoadHandlers.ClickMarkerCollectorGetMarkers?.Invoke();
-        foreach (ClickMarker click in clickMarkers)
-        {
-            Destroy(click.gameObject);
-        }
+    {
+        PlayerEventHandler.DeSelectUnits?.Invoke();
+        InteractableMenuEventHandler.ClearInteractMenus?.Invoke();
+
+        SaveLoadHandlers.ClearClickMarkers?.Invoke();
 
         List<InteractableBasics> interactableBasicsList = new List<InteractableBasics>();
         foreach (InteractableData interact in data.myInteractsData)
@@ -388,13 +385,13 @@ public class SaveManager : MonoBehaviour
         SaveLoadHandlers.SetItemAttBasicsLoadingForCreate?.Invoke(itemAttBasicsList.ToArray());
         itemAttBasicsList.Clear();
 
-        SaveLoadHandlers.CreatorFuncEvent?.Invoke();        
+        SaveLoadHandlers.CreatorFuncEvent?.Invoke();
 
         //camera and controller load
         Time.timeScale = data.myControllerData.pause;
         SaveLoadHandlers.PlayerManagerTransformLoad?.Invoke(data.myControllerData.positionx, data.myControllerData.positiony, data.myControllerData.positionz);
         SaveLoadHandlers.PlayerManagerRotationYLoad?.Invoke(data.myControllerData.rotationy);
-        SaveLoadHandlers.VirtualCamOffsetLoad?.Invoke(data.myControllerData.virtualCamOffsetZ);       
+        SaveLoadHandlers.VirtualCamOffsetLoad?.Invoke(data.myControllerData.virtualCamOffsetZ);
     }
     private void SetInteracts(Interactable[] arg0)
     {
@@ -421,4 +418,5 @@ public class SaveManager : MonoBehaviour
     {
         virtualCamOffset = arg0;
     }
+
 }

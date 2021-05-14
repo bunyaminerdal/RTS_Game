@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class UnitController : MonoBehaviour {
+public class UnitController : MonoBehaviour
+{
     private UnitBoxController unitBoxController;
     private SkinnedMeshRenderer newMeshHelmet;
     private SkinnedMeshRenderer newMeshChest;
@@ -23,18 +24,18 @@ public class UnitController : MonoBehaviour {
     public Vector3 unitDestination;
     public Interactable unitInteract;
 
-    public UnitStats unitStats;   
+    public UnitStats unitStats;
     private bool isGathering;
-    
-    
+
+
     public GameObject clickMarker;
     public Interactable interact;
     public Transform clickMarkerTransform;
     [SerializeField]
     private GameObject selectionMarker;
     private LineRenderer myLineRenderer;
-    private bool isUnitSelected;    
-    private UnitInventory unitInventory =new UnitInventory(6);
+    private bool isUnitSelected;
+    private UnitInventory unitInventory = new UnitInventory(6);
     public UnitInventory unitInventoryStart = new UnitInventory(6);
     private UnitInventory unitEqInventory = new UnitInventory(3);
     public UnitInventory unitEqInventoryStart = new UnitInventory(3);
@@ -62,10 +63,10 @@ public class UnitController : MonoBehaviour {
         rect = new Rect(0, 0, 100, 100);
         unitRenderTexture = new RenderTexture(copyRenderTexture);
         unitTexture = new Texture2D(100, 100, TextureFormat.RGBAFloat, false);
-        StartCoroutine( UnitTextureRender());
+        StartCoroutine(UnitTextureRender());
 
-        healthBar = Instantiate(healthBarPrefab, transform);        
-        
+        healthBar = Instantiate(healthBarPrefab, transform);
+
         navAgent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
         //clickMarker
@@ -74,32 +75,34 @@ public class UnitController : MonoBehaviour {
         myLineRenderer.endWidth = 0.1f;
         myLineRenderer.positionCount = 0;
 
-        if (unitDestination!=transform.position)
+        if (unitDestination != transform.position)
         {
             MoveUnit(unitDestination);
         }
 
-        if(unitInteract != null)
-        {            
+        if (unitInteract != null)
+        {
             SetFocus(unitInteract.transform);
             unitInteract.takedInteractSlot();
             startGather(unitInteract);
         }
-        
+
         for (int i = 0; i < unitEqInventory.Container.Slots.Length; i++)
         {
             unitEqInventory.Container.Slots[i].AllowedItems = new ItemType[1];
-            if(i==0)
+            if (i == 0)
             {
-                unitEqInventory.Container.Slots[i].AllowedItems[0]= ItemType.Chest;
-            }else if(i==1)
-            {
-                unitEqInventory.Container.Slots[i].AllowedItems[0]= ItemType.Helmet;
-            }else if(i==2)
-            {
-                unitEqInventory.Container.Slots[i].AllowedItems[0]= ItemType.Weapon;
+                unitEqInventory.Container.Slots[i].AllowedItems[0] = ItemType.Chest;
             }
-            
+            else if (i == 1)
+            {
+                unitEqInventory.Container.Slots[i].AllowedItems[0] = ItemType.Helmet;
+            }
+            else if (i == 2)
+            {
+                unitEqInventory.Container.Slots[i].AllowedItems[0] = ItemType.Weapon;
+            }
+
         }
 
         //bunun save de çalışabilmesi için inventory oluşturulurken yapılması lazım.
@@ -121,23 +124,23 @@ public class UnitController : MonoBehaviour {
             unitEqInventory.GetSlots[i].OnBeforeUpdate += OnBeforeSlotUpdate;
             unitEqInventory.GetSlots[i].OnAfterUpdate += OnAfterSlotUpdate;
         }
-        if(unitInventoryStart !=null)
+        if (unitInventoryStart != null)
         {
             SetInventory(unitInventoryStart);
-            unitInventoryStart=null;
+            unitInventoryStart = null;
         }
-        if(unitEqInventoryStart !=null)
+        if (unitEqInventoryStart != null)
         {
-            SetEqInventory(unitEqInventoryStart);            
-            unitEqInventoryStart=null;
-        }        
+            SetEqInventory(unitEqInventoryStart);
+            unitEqInventoryStart = null;
+        }
         gatherTimer = unitStats.gatheringSpeed;
     }
     public void OnBeforeSlotUpdate(InventorySlot _slot)
     {
-        if(_slot.item == null)        
+        if (_slot.item == null)
             return;
-                        
+
         for (int i = 0; i < _slot.item.buffs.Length; i++)
         {
             for (int j = 0; j < attributes.Length; j++)
@@ -156,21 +159,21 @@ public class UnitController : MonoBehaviour {
                     if (newMeshHelmet.gameObject != null)
                     {
                         Destroy(newMeshHelmet.gameObject);
-                        
+
                     }
                     break;
                 case ItemType.Chest:
                     if (newMeshChest.gameObject != null)
                     {
                         Destroy(newMeshChest.gameObject);
-                        
+
                     }
                     break;
                 case ItemType.Weapon:
                     if (newMeshWeapon.gameObject != null)
                     {
                         Destroy(newMeshWeapon.gameObject);
-                        
+
                     }
                     break;
 
@@ -181,28 +184,28 @@ public class UnitController : MonoBehaviour {
     }
     public void OnAfterSlotUpdate(InventorySlot _slot)
     {
-        
+
         if (_slot.item == null)
         {
             StartCoroutine(UnitTextureRender());
             return;
         }
-             
+
         for (int i = 0; i < _slot.item.buffs.Length; i++)
         {
             for (int j = 0; j < attributes.Length; j++)
             {
                 if (attributes[j].type == _slot.item.buffs[i].attribute)
-                {                    
+                {
                     attributes[j].value.AddModifier(_slot.item.buffs[i]);
                 }
             }
         }
-        if (_slot.item.unitDisplay !=null)
+        if (_slot.item.unitDisplay != null)
         {
             switch (_slot.AllowedItems[0])
             {
-                case ItemType.Helmet:                    
+                case ItemType.Helmet:
                     newMeshHelmet = Instantiate<SkinnedMeshRenderer>(_slot.item.unitDisplay);
                     newMeshHelmet.transform.parent = TargetMesh.transform;
                     newMeshHelmet.bones = TargetMesh.bones;
@@ -219,21 +222,21 @@ public class UnitController : MonoBehaviour {
                     newMeshWeapon.transform.parent = TargetMesh.transform;
                     newMeshWeapon.bones = TargetMesh.bones;
                     newMeshWeapon.rootBone = TargetMesh.bones[14];
-                    
+
                     break;
-                
+
                 default:
                     break;
             }
             StartCoroutine(UnitTextureRender());
         }
-        
+
     }
     IEnumerator UnitTextureRender()
     {
         yield return null;
-        if (unitCam!=null)
-            {
+        if (unitCam != null)
+        {
             unitCam.targetTexture = unitRenderTexture;
             unitCam.Render();
             RenderTexture.active = unitRenderTexture;
@@ -241,19 +244,19 @@ public class UnitController : MonoBehaviour {
             unitTexture.Apply();
             unitCam.targetTexture = null;
             RenderTexture.active = null;
-            unitCam.gameObject.SetActive(false);            
-            unitBoxController.onItemChange(GetComponent<PlayerUnitController>(),unitTexture);
+            unitCam.gameObject.SetActive(false);
+            unitBoxController.onItemChange(GetComponent<PlayerUnitController>(), unitTexture);
         }
-        
+
     }
-    
+
     private void Update()
     {
-        if(isDead)
+        if (isDead)
         {
             if (attributes[1].stringValue.ModifiedValue != "Dead")
                 attributes[1].stringValue.SetModifier("Dead");
-                animator.SetBool("isDeath", true);
+            animator.SetBool("isDeath", true);
             return;
         }
         //click marker
@@ -264,7 +267,7 @@ public class UnitController : MonoBehaviour {
                 clickMarker.SetActive(false);
                 clickMarker.transform.position = transform.position;
                 clickMarker.transform.SetParent(transform);
-                myLineRenderer.positionCount = 0;                
+                myLineRenderer.positionCount = 0;
             }
             if (attributes[1].stringValue.ModifiedValue != "Idle")
             {
@@ -275,15 +278,17 @@ public class UnitController : MonoBehaviour {
                 animator.SetBool("isGathering", false);
                 animator.SetBool("isShooting", false);
             }
-                
-                
+
+
         }
-        else if(navAgent.hasPath)
+        else if (navAgent.hasPath)
         {
             if (isUnitSelected)
             {
                 DrawPath();
-            }else{
+            }
+            else
+            {
                 if (clickMarker.activeSelf)
                 {
                     //click marker
@@ -292,7 +297,7 @@ public class UnitController : MonoBehaviour {
                     clickMarker.transform.SetParent(transform);
                     myLineRenderer.positionCount = 0;
                 }
-            }            
+            }
             if (attributes[1].stringValue.ModifiedValue != "Running")
             {
                 attributes[1].stringValue.SetModifier("Running");
@@ -302,18 +307,18 @@ public class UnitController : MonoBehaviour {
                 animator.SetBool("isShooting", false);
                 animator.SetBool("isRunning", true);
             }
-               
+
         }
-        
-        if(currentTarget != null)
+
+        if (currentTarget != null)
         {
-            
+
             distance = (transform.position - currentTarget.position).magnitude;
-            
+
             FaceTarget(currentTarget);
             if (distance <= attributes[6].value.ModifiedValue)
             {
-                if(attributes[6].value.ModifiedValue <= 2)
+                if (attributes[6].value.ModifiedValue <= 2)
                 {
                     animator.SetBool("isAttacking", true);
                 }
@@ -321,25 +326,25 @@ public class UnitController : MonoBehaviour {
                 {
                     animator.SetBool("isShooting", true);
                 }
-                
+
                 animator.SetFloat("attackTimer", attackTimer);
 
                 navAgent.destination = transform.position;
-                
+
                 attackTimer -= Time.deltaTime;
                 Attack();
                 if (attributes[1].stringValue.ModifiedValue != "Attacking")
                     attributes[1].stringValue.SetModifier("Attacking");
-                    
+
             }
             else
             {
                 navAgent.destination = currentTarget.position;
             }
         }
-        if(currentFocus != null)
-        {   
-            if(navAgent.destination != currentFocus.Find("InteractionPoint").gameObject.transform.position)
+        if (currentFocus != null)
+        {
+            if (navAgent.destination != currentFocus.Find("InteractionPoint").gameObject.transform.position)
             {
                 navAgent.destination = currentFocus.Find("InteractionPoint").gameObject.transform.position;
                 distance = (transform.position - currentFocus.Find("InteractionPoint").gameObject.transform.position).magnitude;
@@ -347,7 +352,7 @@ public class UnitController : MonoBehaviour {
             FaceTarget(currentFocus);
             if (distance <= 2f)
             {
-                if(isGathering)
+                if (isGathering)
                 {
                     gatherTimer -= Time.deltaTime;
                     Gather();
@@ -356,29 +361,29 @@ public class UnitController : MonoBehaviour {
                         attributes[1].stringValue.SetModifier("Gathering");
                         animator.SetBool("isGathering", true);
                     }
-               }
-                
+                }
+
             }
-            
-            
+
+
         }
 
-        if(currentTargetItem != null)
+        if (currentTargetItem != null)
         {
-            if(navAgent.destination != currentTargetItem.position)
+            if (navAgent.destination != currentTargetItem.position)
             {
                 navAgent.destination = currentTargetItem.position;
                 distance = (transform.position - currentTargetItem.position).magnitude;
-            }           
+            }
 
-            if(distance <= 2f)
+            if (distance <= 2f)
             {
-                var item = currentTargetItem.GetComponent<groundItem>();                
-                unitInventory.AddItem(item.item,1);
+                var item = currentTargetItem.GetComponent<groundItem>();
+                unitInventory.AddItem(item.item, 1);
                 Destroy(item.gameObject);
             }
 
-        } 
+        }
     }
 
     public void MoveUnit(Vector3 dest)
@@ -386,16 +391,17 @@ public class UnitController : MonoBehaviour {
         currentTarget = null;
         currentFocus = null;
         currentTargetItem = null;
-        navAgent.stoppingDistance=1f;
+        navAgent.stoppingDistance = 1f;
         navAgent.destination = dest;
         navAgent.updateRotation = true;
     }
 
     public void SetSelected(bool isSelected)
     {
+
         selectionMarker.SetActive(isSelected);
 
-        isUnitSelected =isSelected;
+        isUnitSelected = isSelected;
         unitBoxController.onUnitSelected(GetComponent<PlayerUnitController>(), isSelected);
     }
 
@@ -409,7 +415,7 @@ public class UnitController : MonoBehaviour {
         currentTarget = enemy;
         currentFocus = null;
         currentTargetItem = null;
-        navAgent.stoppingDistance=2f;
+        navAgent.stoppingDistance = 2f;
         navAgent.updateRotation = false;
         attackTimer = attributes[4].value.ModifiedValue;
     }
@@ -419,16 +425,16 @@ public class UnitController : MonoBehaviour {
         currentTarget = null;
         currentTargetItem = null;
         currentFocus = newFocus;
-        navAgent.stoppingDistance=1.8f;
+        navAgent.stoppingDistance = 1.8f;
         navAgent.updateRotation = false; //true olursa gelince kafasını çeviriyor, false olursa gelirken dönüyor
         gatherTimer = unitStats.gatheringSpeed;
     }
 
     public void Attack()
-    {        
+    {
 
-        if (attackTimer <= 0 )
-        {            
+        if (attackTimer <= 0)
+        {
             RTSGameManager.UnitTakeDamage(this, currentTarget.GetComponent<UnitController>());
             attackTimer = attributes[4].value.ModifiedValue;
         }
@@ -436,7 +442,7 @@ public class UnitController : MonoBehaviour {
 
     public void Gather()
     {
-        if(currentFocus.GetComponent<Interactable>().getCurrentAmount() <= 0)
+        if (currentFocus.GetComponent<Interactable>().getCurrentAmount() <= 0)
         {
             stopGather();
         }
@@ -453,13 +459,13 @@ public class UnitController : MonoBehaviour {
                 gatherTimer = unitStats.gatheringSpeed;
             }
         }
-                
+
     }
 
     public void TakeDamage(UnitController enemy, float damage)
     {
         ModifyHealth(damage);
-        if(CurrentHealth<=0)
+        if (CurrentHealth <= 0)
         {
             enemy.currentTarget = null;
             isDead = true;
@@ -479,15 +485,15 @@ public class UnitController : MonoBehaviour {
 
     void FaceTarget(Transform target)
     {
-        Vector3 direction =  (target.position - transform.position).normalized;
-        Quaternion  lookRotation = Quaternion.LookRotation(new Vector3(direction.x,0f,direction.z));
-        transform.rotation  = Quaternion.Slerp(transform.rotation,lookRotation,Time.deltaTime*5f);
+        Vector3 direction = (target.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0f, direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
     }
 
     public void stopGather()
-    {   
+    {
         interact.giveInteractSlot();
-        interact=null;
+        interact = null;
         isGathering = false;
         if (newMeshWeapon != null)
         {
@@ -497,15 +503,15 @@ public class UnitController : MonoBehaviour {
     }
     public void startGather(Interactable _interact)
     {
-        if(interact!=null)
+        if (interact != null)
         {
             interact.giveInteractSlot();
-            interact=null;
+            interact = null;
         }
-        interact=_interact;
+        interact = _interact;
         isGathering = true;
-        
-        
+
+
     }
 
     public bool IsGathering()
@@ -517,16 +523,16 @@ public class UnitController : MonoBehaviour {
     void DrawPath()
     {
         myLineRenderer.positionCount = navAgent.path.corners.Length;
-        myLineRenderer.SetPosition(0,transform.position);
-        if (navAgent.path.corners.Length<2)
+        myLineRenderer.SetPosition(0, transform.position);
+        if (navAgent.path.corners.Length < 2)
         {
             return;
         }
         Vector3 pointPos = Vector3.zero;
         for (int i = 0; i < navAgent.path.corners.Length; i++)
         {
-            pointPos = new Vector3(navAgent.path.corners[i].x,navAgent.path.corners[i].y,navAgent.path.corners[i].z);
-            myLineRenderer.SetPosition(i,pointPos);
+            pointPos = new Vector3(navAgent.path.corners[i].x, navAgent.path.corners[i].y, navAgent.path.corners[i].z);
+            myLineRenderer.SetPosition(i, pointPos);
         }
         clickMarker.transform.position = pointPos;
         if (!clickMarker.activeSelf)
@@ -534,9 +540,9 @@ public class UnitController : MonoBehaviour {
             //click marker
             clickMarker.transform.SetParent(clickMarkerTransform);
             clickMarker.SetActive(true);
-                
+
         }
-        
+
     }
 
     public void GetItem(Transform item)
@@ -544,17 +550,17 @@ public class UnitController : MonoBehaviour {
         currentTarget = null;
         currentTargetItem = item;
         currentFocus = null;
-        navAgent.stoppingDistance=2f;
-        navAgent.updateRotation = true;        
+        navAgent.stoppingDistance = 2f;
+        navAgent.updateRotation = true;
     }
 
     public void addItemToInventory(Item item)
     {
-        if(isGathering)
+        if (isGathering)
         {
-            unitInventory.AddItem(item,1);
+            unitInventory.AddItem(item, 1);
         }
-        
+
     }
 
     public UnitInventory getUnitInventory()
@@ -564,7 +570,7 @@ public class UnitController : MonoBehaviour {
 
     public void SetInventory(UnitInventory inventory)
     {
-        unitInventory = inventory;        
+        unitInventory = inventory;
     }
     public UnitInventory getUnitEqInventory()
     {
@@ -575,20 +581,20 @@ public class UnitController : MonoBehaviour {
     {
         for (int i = 0; i < inventory.Container.Slots.Length; i++)
         {
-            unitEqInventory.GetSlots[i].updateSlot(inventory.Container.Slots[i].ID,inventory.Container.Slots[i].item,inventory.Container.Slots[i].amount);
-        }        
+            unitEqInventory.GetSlots[i].updateSlot(inventory.Container.Slots[i].ID, inventory.Container.Slots[i].item, inventory.Container.Slots[i].amount);
+        }
     }
 
     //unitin modifierları update olunca çalışacak
     public void AttributeModified(Attribute _attribute)
     {
-        if(_attribute.type==Attributes.Status)
+        if (_attribute.type == Attributes.Status)
         {
             Debug.Log("Name was changed");
         }
-        
+
     }
-        
+
 
 }
 

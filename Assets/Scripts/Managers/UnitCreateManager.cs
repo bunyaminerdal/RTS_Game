@@ -99,7 +99,7 @@ public class UnitCreateManager : MonoBehaviour
 
     }
 
-   
+
 
     private void OnDisable()
     {
@@ -149,7 +149,7 @@ public class UnitCreateManager : MonoBehaviour
 
     public void CreatorFunc()
     {
-        CreateInteractable();        
+        CreateInteractable();
         UnitCreate();
         CreateInventory();
     }
@@ -158,91 +158,91 @@ public class UnitCreateManager : MonoBehaviour
     {
         SaveLoadHandlers.UnitFrameClearBeforeUnitCreated?.Invoke();
 
-            for (int i = 0; i < unitList.Length; i++)
+        for (int i = 0; i < unitList.Length; i++)
+        {
+            switch (unitList[i].unitType)
             {
-                switch (unitList[i].unitType)
-                {
-                    case "man":
-                        unitPrefab = manPrefab;
-                        break;
-                    case "man1":
-                        unitPrefab = manPrefab1;
-                        break;
-                    case "man2":
-                        unitPrefab = manPrefab2;
-                        break;
-                    case "woman":
-                        unitPrefab = womanPrefab;
-                        break;
-                    case "woman1":
-                        unitPrefab = womanPrefab1;
-                        break;
-                    case "woman2":
-                        unitPrefab = womanPrefab2;
-                        break;
-                    case "police":
-                        unitPrefab = policePrefab;
-                        break;
-                    default:
-                        unitPrefab = manPrefab;
-                        break;
-                }
+                case "man":
+                    unitPrefab = manPrefab;
+                    break;
+                case "man1":
+                    unitPrefab = manPrefab1;
+                    break;
+                case "man2":
+                    unitPrefab = manPrefab2;
+                    break;
+                case "woman":
+                    unitPrefab = womanPrefab;
+                    break;
+                case "woman1":
+                    unitPrefab = womanPrefab1;
+                    break;
+                case "woman2":
+                    unitPrefab = womanPrefab2;
+                    break;
+                case "police":
+                    unitPrefab = policePrefab;
+                    break;
+                default:
+                    unitPrefab = manPrefab;
+                    break;
+            }
 
-                createdUnit = Instantiate(unitPrefab, unitCollector.transform);
-                createdUnit.name = unitList[i].unitName;
-                createdUnit.transform.position = unitList[i].position;
-                createdUnit.transform.eulerAngles = unitList[i].rotation;
+            createdUnit = Instantiate(unitPrefab, unitCollector.transform);
+            createdUnit.name = unitList[i].unitName;
+            createdUnit.transform.position = unitList[i].position;
+            createdUnit.transform.eulerAngles = unitList[i].rotation;
 
-                PlayerUnitController PlayerUnitController = createdUnit.GetComponent<PlayerUnitController>();
-                PlayerUnitController.unitName = unitList[i].unitName;
-                PlayerUnitController.unitType = unitList[i].unitType;
-                PlayerUnitController.clickMarkerTransform = clickMarkerTransform;
-                PlayerUnitController.unitDestination = unitList[i].destination;
-                if (unitList[i].interactName != "No interact")
-                {
+            PlayerUnitController PlayerUnitController = createdUnit.GetComponent<PlayerUnitController>();
+            PlayerUnitController.unitName = unitList[i].unitName;
+            PlayerUnitController.unitType = unitList[i].unitType;
+            PlayerUnitController.clickMarkerTransform = clickMarkerTransform;
+            PlayerUnitController.unitDestination = unitList[i].destination;
+            if (unitList[i].interactName != "No interact")
+            {
                 SaveLoadHandlers.interactableCollectorGetInteracts?.Invoke();
-                    foreach (Interactable interact in interactables)
+                foreach (Interactable interact in interactables)
+                {
+                    if (unitList[i].interactName == interact.interactName)
                     {
-                        if (unitList[i].interactName == interact.interactName)
-                        {
-                            interactableObject = interact;
-                        }
+                        interactableObject = interact;
                     }
-                    PlayerUnitController.unitInteract = interactableObject;
                 }
+                PlayerUnitController.unitInteract = interactableObject;
+            }
             SaveLoadHandlers.UnitFrameClearAfterUnitCreated?.Invoke(PlayerUnitController);
-            }        
+        }
     }
 
     void CreateInteractable()
     {
-        
-            for (int i = 0; i < interactableList.Length; i++)
-            {
-                switch (interactableList[i].interactableType)
-                {
-                    case "Garbage":
-                        interactPrefab = GarbagePrefab;
-                        break;
-                    case "TrashBin":
-                        interactPrefab = TrashbinPrefab;
-                        break;
-                    default:
-                        interactPrefab = GarbagePrefab;
-                        break;
-                }
-                createdInteractable = Instantiate(interactPrefab, interactableCollector.transform);
-                createdInteractable.name = interactableList[i].interactableName;
-                createdInteractable.transform.position = interactableList[i].position;
-                createdInteractable.transform.eulerAngles = interactableList[i].rotation;
-                Interactable interactableProperties = createdInteractable.GetComponent<Interactable>();
-                interactableProperties.CurrentAmount = interactableList[i].currentAmount;
-                interactableProperties.interactName = interactableList[i].interactableName;
-                interactableProperties.interactType = interactableList[i].interactableType;
-                interactableProperties.respawnTime = interactableList[i].spawnTimer;
-            }
 
-        
+        for (int i = 0; i < interactableList.Length; i++)
+        {
+            switch (interactableList[i].interactableType)
+            {
+                case "Garbage":
+                    interactPrefab = GarbagePrefab;
+                    break;
+                case "TrashBin":
+                    interactPrefab = TrashbinPrefab;
+                    break;
+                default:
+                    interactPrefab = GarbagePrefab;
+                    break;
+            }
+            createdInteractable = Instantiate(interactPrefab, interactableCollector.transform);
+            createdInteractable.name = interactableList[i].interactableName;
+            createdInteractable.transform.position = interactableList[i].position;
+            createdInteractable.transform.eulerAngles = interactableList[i].rotation;
+            Interactable interactableProperties = createdInteractable.GetComponent<Interactable>();
+            interactableProperties.CurrentAmount = interactableList[i].currentAmount;
+            interactableProperties.interactName = interactableList[i].interactableName;
+            interactableProperties.interactType = interactableList[i].interactableType;
+            interactableProperties.respawnTime = interactableList[i].spawnTimer;
+        }
+
+
     }
     void CreateInventory()
     {

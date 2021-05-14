@@ -1,7 +1,7 @@
 
 using UnityEngine.Events;
 
-public static class SaveLoadHandlers 
+public static class SaveLoadHandlers
 {
     public static UnityEvent<float, float, float> PlayerManagerTransform = new UnityEvent<float, float, float>();
     public static UnityEvent<float> PlayerManagerRotationY = new UnityEvent<float>();
@@ -16,8 +16,7 @@ public static class SaveLoadHandlers
     public static UnityEvent interactableCollectorGetInteracts = new UnityEvent();
     public static UnityEvent<Interactable[]> interactableCollectorSetInteracts = new UnityEvent<Interactable[]>();
 
-    public static UnityEvent ClickMarkerCollectorGetMarkers = new UnityEvent();
-    public static UnityEvent<ClickMarker[]> ClickMarkerCollectorSetMarkers = new UnityEvent<ClickMarker[]>();
+    public static UnityEvent ClearClickMarkers = new UnityEvent();
 
     public static UnityEvent<InteractableBasics[]> SetInteractableBasicsLoadingForCreate = new UnityEvent<InteractableBasics[]>();
     public static UnityEvent<UnitBasics[]> SetUnitBasicsLoadingForCreate = new UnityEvent<UnitBasics[]>();

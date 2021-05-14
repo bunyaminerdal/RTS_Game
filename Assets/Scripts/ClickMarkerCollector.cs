@@ -4,18 +4,20 @@ using UnityEngine;
 
 public class ClickMarkerCollector : MonoBehaviour
 {
-    private ClickMarker[] clickMarkers;
     private void OnEnable()
     {
-        SaveLoadHandlers.ClickMarkerCollectorGetMarkers.AddListener(GetClickMarkers);
+        SaveLoadHandlers.ClearClickMarkers.AddListener(GetClickMarkers);
     }
     private void OnDisable()
     {
-        SaveLoadHandlers.ClickMarkerCollectorGetMarkers.RemoveListener(GetClickMarkers);
+        SaveLoadHandlers.ClearClickMarkers.RemoveListener(GetClickMarkers);
     }
     private void GetClickMarkers()
     {
-        clickMarkers = transform.GetComponentsInChildren<ClickMarker>();
-        SaveLoadHandlers.ClickMarkerCollectorSetMarkers?.Invoke(clickMarkers);
+        ClickMarker[] clickMarkers = transform.GetComponentsInChildren<ClickMarker>();
+        foreach (ClickMarker clickMarker in clickMarkers)
+        {
+            Destroy(clickMarker.gameObject);
+        }
     }
 }
