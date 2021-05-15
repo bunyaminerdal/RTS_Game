@@ -8,6 +8,7 @@ public abstract class Command : MonoBehaviour
     {
 
     }
+
     public virtual void ExecuteWithBool(bool value)
     {
 

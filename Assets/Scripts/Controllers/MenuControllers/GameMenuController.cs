@@ -4,6 +4,15 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum MenuType
+{
+    Closed,
+    MainMenu,
+    GameMenu,
+    LoadMenu,
+    SaveMenu,
+    OptionsMenu
+}
 public class GameMenuController : MonoBehaviour
 {
     [SerializeField]
@@ -20,6 +29,30 @@ public class GameMenuController : MonoBehaviour
     [SerializeField]
     private GameObject loadText;
 
+    [SerializeField]
+    private GameObject GameMenuObj;
+    [SerializeField]
+    private GameObject LoadMenuObj;
+    [SerializeField]
+    private GameObject SaveMenuObj;
+    private Dictionary<MenuType, GameObject> menuDic;
+
+    private void Awake()
+    {
+        menuDic = new Dictionary<MenuType, GameObject>();
+        menuDic.Add(MenuType.GameMenu, GameMenuObj);
+        menuDic.Add(MenuType.SaveMenu, SaveMenuObj);
+        menuDic.Add(MenuType.LoadMenu, LoadMenuObj);
+
+    }
+    private void OnEnable()
+    {
+        MenuEventHandler.GameMenuClicked.AddListener(GameMenuOpener);
+    }
+    private void OnDisable()
+    {
+        MenuEventHandler.GameMenuClicked.RemoveListener(GameMenuOpener);
+    }
     public void resumeBttn()
     {
         MenuEventHandler.ResumeButtonClicked?.Invoke();
@@ -27,89 +60,82 @@ public class GameMenuController : MonoBehaviour
 
     public void saveMenuBttn()
     {
-        SaveMenuOpenerInput(true);
+        SaveManager.Instance.LoadGameData();
+        GameMenuOpener(MenuType.SaveMenu);
+        saveMenuOpener();
     }
 
     public void saveGameBackButton()
     {
-        SaveMenuOpenerInput(false);
+        GameMenuOpener(MenuType.GameMenu);
     }
     public void loadGameBackButton()
     {
-        LoadMenuOpenerInput(false);
+        GameMenuOpener(MenuType.GameMenu);
     }
     public void loadMenuBttn()
     {
-        LoadMenuOpenerInput(true);
-    }
-    public void SaveMenuOpenerInput(bool isOpened)
-    {
         SaveManager.Instance.LoadGameData();
-        saveMenuOpener(isOpened);
-        GameObject.Find("CanvasMenu").transform.GetChild(0).gameObject.SetActive(!isOpened);
-        GameObject.Find("CanvasMenu").transform.GetChild(1).gameObject.SetActive(isOpened);
+        GameMenuOpener(MenuType.LoadMenu);
+        loadMenuOpener();
     }
-    public void LoadMenuOpenerInput(bool isOpened)
+
+
+    private void GameMenuOpener(MenuType menuType)
     {
+        foreach (MenuType type in menuDic.Keys)
+        {
+            if (menuDic[type] != null) menuDic[type].SetActive(false);
+            if (type == menuType && menuType != MenuType.Closed)
+            {
+                if (menuDic[type] != null) menuDic[type].SetActive(true);
+                MenuEventHandler.CurrentMenuChanged?.Invoke(type);
+            }
+        }
 
-        SaveManager.Instance.LoadGameData();
-        loadMenuOpener(isOpened);
-        GameObject.Find("CanvasMenu").transform.GetChild(0).gameObject.SetActive(!isOpened);
-        GameObject.Find("CanvasMenu").transform.GetChild(2).gameObject.SetActive(isOpened);
     }
 
 
-    public void saveMenuOpener(bool isOpened)
+    public void saveMenuOpener()
     {
         gameDataList = SaveManager.Instance.gameDataList;
-
-        if (isOpened)
+        if (gameDataList.Count > 0 && GameObject.Find("saveGameContent").transform.childCount > 0)
         {
-            createSaveGamepre();
-        }
-        else
-        {
-            if (gameDataList.Count > 0)
+            for (int i = 0; i < gameDataList.Count; i++)
             {
-                for (int i = 0; i < gameDataList.Count; i++)
+                var loaddata = GameObject.Find("saveGameContent").transform.GetChild(i).gameObject;
+                if (loaddata != null)
                 {
-                    var loaddata = GameObject.Find("saveGameContent").transform.GetChild(i).gameObject;
-                    if (loaddata != null)
-                    {
-                        Destroy(loaddata);
-                    }
+                    Destroy(loaddata);
                 }
             }
         }
+        createSaveGamepre();
+
     }
 
-    public void loadMenuOpener(bool isOpened)
+    public void loadMenuOpener()
     {
         gameDataList = SaveManager.Instance.gameDataList;
-        if (isOpened)
+        if (gameDataList.Count > 0 && GameObject.Find("loadGameContent").transform.childCount > 0)
         {
-            if (gameDataList.Count > 0)
+            for (int i = 0; i < gameDataList.Count; i++)
             {
-                TMP_Text text = loadText.GetComponent<TMP_Text>();
-                text.text = gameDataList[0].gameName;
-            }
-            createLoadGamepre();
-        }
-        else
-        {
-            if (gameDataList.Count > 0)
-            {
-                for (int i = 0; i < gameDataList.Count; i++)
+                var loaddata = GameObject.Find("loadGameContent").transform.GetChild(i).gameObject;
+                if (loaddata != null)
                 {
-                    var loaddata = GameObject.Find("loadGameContent").transform.GetChild(i).gameObject;
-                    if (loaddata != null)
-                    {
-                        Destroy(loaddata);
-                    }
-
+                    Destroy(loaddata);
                 }
+
             }
         }
+        if (gameDataList.Count > 0)
+        {
+            TMP_Text text = loadText.GetComponent<TMP_Text>();
+            text.text = gameDataList[0].gameName;
+        }
+        createLoadGamepre();
+
     }
 
     void TaskOnClick(int index)

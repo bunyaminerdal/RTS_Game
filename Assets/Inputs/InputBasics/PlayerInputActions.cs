@@ -854,6 +854,33 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""InMenu"",
+            ""id"": ""88f08d39-1b17-4ec8-92c7-5193240ff298"",
+            ""actions"": [
+                {
+                    ""name"": ""ESC"",
+                    ""type"": ""Button"",
+                    ""id"": ""f9f9626b-938f-4c74-9dcb-26121a21ebb1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""269ac23a-8f66-49ff-9f4f-d66a078316e6"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ESC"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -884,6 +911,9 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
         m_UI_RightClick = m_UI.FindAction("RightClick", throwIfNotFound: true);
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        // InMenu
+        m_InMenu = asset.FindActionMap("InMenu", throwIfNotFound: true);
+        m_InMenu_ESC = m_InMenu.FindAction("ESC", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1155,6 +1185,39 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
         }
     }
     public UIActions @UI => new UIActions(this);
+
+    // InMenu
+    private readonly InputActionMap m_InMenu;
+    private IInMenuActions m_InMenuActionsCallbackInterface;
+    private readonly InputAction m_InMenu_ESC;
+    public struct InMenuActions
+    {
+        private @PlayerInputActions m_Wrapper;
+        public InMenuActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @ESC => m_Wrapper.m_InMenu_ESC;
+        public InputActionMap Get() { return m_Wrapper.m_InMenu; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(InMenuActions set) { return set.Get(); }
+        public void SetCallbacks(IInMenuActions instance)
+        {
+            if (m_Wrapper.m_InMenuActionsCallbackInterface != null)
+            {
+                @ESC.started -= m_Wrapper.m_InMenuActionsCallbackInterface.OnESC;
+                @ESC.performed -= m_Wrapper.m_InMenuActionsCallbackInterface.OnESC;
+                @ESC.canceled -= m_Wrapper.m_InMenuActionsCallbackInterface.OnESC;
+            }
+            m_Wrapper.m_InMenuActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @ESC.started += instance.OnESC;
+                @ESC.performed += instance.OnESC;
+                @ESC.canceled += instance.OnESC;
+            }
+        }
+    }
+    public InMenuActions @InMenu => new InMenuActions(this);
     public interface IPlayerActions
     {
         void OnMovement(InputAction.CallbackContext context);
@@ -1182,5 +1245,9 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
         void OnRightClick(InputAction.CallbackContext context);
         void OnTrackedDevicePosition(InputAction.CallbackContext context);
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+    }
+    public interface IInMenuActions
+    {
+        void OnESC(InputAction.CallbackContext context);
     }
 }

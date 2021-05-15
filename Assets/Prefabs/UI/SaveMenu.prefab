@@ -959,7 +959,6 @@ GameObject:
   - component: {fileID: 6630552827942103129}
   - component: {fileID: 9022489779784901758}
   - component: {fileID: 60625633556440781}
-  - component: {fileID: 477038193}
   m_Layer: 5
   m_Name: backbutton
   m_TagString: Untagged
@@ -1066,8 +1065,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 477038193}
-        m_TargetAssemblyTypeName: 
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: GameMenuController, Assembly-CSharp
         m_MethodName: saveGameBackButton
         m_Mode: 1
         m_Arguments:
@@ -1078,23 +1077,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &477038193
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6123058866018175466}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22de7a445954cc2418b400168900967a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  saveGame: {fileID: 0}
-  savecontent: {fileID: 0}
-  loadcontent: {fileID: 0}
-  inputText: {fileID: 0}
-  loadText: {fileID: 0}
 --- !u!1 &7066367986376239218
 GameObject:
   m_ObjectHideFlags: 0

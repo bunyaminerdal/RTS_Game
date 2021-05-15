@@ -67,14 +67,10 @@ public class NewInputManager : MonoBehaviour,
         playerInputActions.Player.Rotation.performed += Rotation_performed;
         playerInputActions.Player.MultiSelection.performed += MultiSelection_performed;
 
-        MenuEventHandler.ResumeButtonClicked.AddListener(MenuActionRequest);
+        MenuEventHandler.ResumeButtonClicked.AddListener(MenuClosedRequest);
 
     }
 
-    private void MenuActionRequest()
-    {
-        isPressingMenuAction = false;
-    }
 
     private void OnDisable()
     {
@@ -92,7 +88,13 @@ public class NewInputManager : MonoBehaviour,
 
         playerInputActions.Disable();
 
-        MenuEventHandler.ResumeButtonClicked.RemoveListener(MenuActionRequest);
+        MenuEventHandler.ResumeButtonClicked.RemoveListener(MenuClosedRequest);
+    }
+
+    private void MenuClosedRequest()
+    {
+        playerInputActions.Player.Enable();
+        isPressingMenuAction = false;
     }
     private void Interact_performed(InputAction.CallbackContext context)
     {
@@ -165,7 +167,7 @@ public class NewInputManager : MonoBehaviour,
     {
         if (menuActionCommand != null)
         {
-            isPressingMenuAction = !isPressingMenuAction;
+            playerInputActions.Player.Disable();
             menuActionCommand.Execute();
         }
 

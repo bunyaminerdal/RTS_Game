@@ -841,6 +841,33 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "InMenu",
+            "id": "88f08d39-1b17-4ec8-92c7-5193240ff298",
+            "actions": [
+                {
+                    "name": "ESC",
+                    "type": "Button",
+                    "id": "f9f9626b-938f-4c74-9dcb-26121a21ebb1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "269ac23a-8f66-49ff-9f4f-d66a078316e6",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ESC",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
