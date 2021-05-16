@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+
 public class PlayerManager : MonoBehaviour
 {
     private Camera cameraMain;
@@ -12,11 +13,19 @@ public class PlayerManager : MonoBehaviour
     public UserInterface displayInventory;
     public UserInterface displayEquipment;
     public UserInterface displayInfo;
+    [SerializeField] private RingMenuController MainMenuPrefab;
+    protected RingMenuController MainMenuInstance;
+
 
     private void Awake()
     {
         cameraMain = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        MainMenuInstance = Instantiate(MainMenuPrefab, GameObject.Find("CanvasInteractable").GetComponent<Canvas>().transform);
+        // MainMenuInstance.location = transform;
+        MainMenuInstance.CreatedMenu();
+        MainMenuInstance.gameObject.SetActive(false);
     }
+
     private void OnEnable()
     {
         PlayerEventHandler.DeSelectUnits.AddListener(DeselectUnits);
@@ -157,6 +166,9 @@ public class PlayerManager : MonoBehaviour
         {
             interactable.OpenInteractMenu(true, true);
         }
+        //ringmenu
+
+        MainMenuInstance.gameObject.SetActive(true);
 
     }
 
@@ -210,6 +222,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (selectedInteractable != null)
         {
+            MainMenuInstance.gameObject.SetActive(false);
             selectedInteractable.onCollectButtonpressed -= İnteractable_onCollectButtonpressed;
             selectedInteractable.SetInteractableSelected(false);
             selectedInteractable.OpenInteractMenu(false, false);

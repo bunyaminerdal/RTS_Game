@@ -585,6 +585,7 @@ MonoBehaviour:
   displayInventory: {fileID: 1525534418}
   displayEquipment: {fileID: 1010290938}
   displayInfo: {fileID: 1814602547}
+  MainMenuPrefab: {fileID: 5747161085045282057, guid: b409a6ed18c8eaa4d9c2e92bfb9046b1, type: 3}
 --- !u!114 &167664780
 MonoBehaviour:
   m_ObjectHideFlags: 0
