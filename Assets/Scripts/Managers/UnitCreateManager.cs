@@ -14,8 +14,7 @@ public class UnitCreateManager : MonoBehaviour
     private GameObject createdInteractable;
     private GameObject interactPrefab;
 
-    [SerializeField]
-    private Transform clickMarkerTransform;
+
     [SerializeField]
     private GameObject manPrefab;
     [SerializeField]
@@ -32,6 +31,7 @@ public class UnitCreateManager : MonoBehaviour
     private GameObject policePrefab;
 
 
+    private GameObject clickMarkerTransform;
     private GameObject unitCollector;
 
     private GameObject interactableCollector;
@@ -57,6 +57,8 @@ public class UnitCreateManager : MonoBehaviour
         unitCollector.AddComponent<PlayerUnitCollector>();
         interactableCollector = new GameObject("InteractableCollector");
         interactableCollector.AddComponent<InteractableCollector>();
+        clickMarkerTransform = new GameObject("ClickMarkerTransform");
+        clickMarkerTransform.AddComponent<ClickMarkerCollector>();
         interactableList = new InteractableBasics[4];
         InteractableBasics interact1 = new InteractableBasics("cop1", "Garbage", new Vector3(10f, 0f, 0f), new Vector3(0f, 0f, 0f), 4f, 0f);
         InteractableBasics interact2 = new InteractableBasics("cop2", "TrashBin", new Vector3(20f, 0f, 0f), new Vector3(0f, 0f, 0f), 0f, 10f);
@@ -200,7 +202,7 @@ public class UnitCreateManager : MonoBehaviour
             PlayerUnitController PlayerUnitController = createdUnit.GetComponent<PlayerUnitController>();
             PlayerUnitController.unitName = unitList[i].unitName;
             PlayerUnitController.unitType = unitList[i].unitType;
-            PlayerUnitController.clickMarkerTransform = clickMarkerTransform;
+            PlayerUnitController.clickMarkerTransform = clickMarkerTransform.transform;
             PlayerUnitController.unitDestination = unitList[i].destination;
             if (unitList[i].interactName != "No interact")
             {
