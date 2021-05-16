@@ -8,15 +8,15 @@ using TMPro;
 
 public class RingMenuController : MonoBehaviour
 {
+    public Transform location;
     public Ring Data;
+
     [SerializeField]
     private GameObject RingCakePiecePrefab;
-    public float GapWidthDegree = 3f;
-    public Transform location;
+
+    private float GapWidthDegree = 3f;
     private GameObject[] Pieces;
     private float stepLength;
-    // Start is called before the first frame update
-
 
     public void CreatedMenu()
     {
@@ -38,7 +38,7 @@ public class RingMenuController : MonoBehaviour
             ringCakePiece.CakePiece.transform.localRotation = Quaternion.Euler(0, 0, -stepLength / 2f + GapWidthDegree / 2f + i * stepLength);
             ringCakePiece.CakePiece.color = new Color(1f, 1f, 1f, 0.3f);
             //set icon
-            ringCakePiece.Icon.transform.localPosition = ringCakePiece.CakePiece.transform.localPosition + Quaternion.AngleAxis(i * stepLength, Vector3.forward) * Vector3.up * iconDist;
+            ringCakePiece.Icon.transform.localPosition = ringCakePiece.CakePiece.transform.localPosition + Quaternion.AngleAxis((i-1) * stepLength, Vector3.forward) * Vector3.up * iconDist;
             ringCakePiece.Icon.sprite = Data.Elements[i].Icon;
             var button = Pieces[i].GetComponentInChildren<Button>();
             button.onClick.AddListener(Data.Elements[i].ElementAction);
