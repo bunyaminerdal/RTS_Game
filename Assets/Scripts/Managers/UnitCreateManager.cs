@@ -7,8 +7,7 @@ public class UnitCreateManager : MonoBehaviour
     private GameObject GarbagePrefab;
     [SerializeField]
     private GameObject TrashbinPrefab;
-    [SerializeField]
-    private GameObject interactableCollector;
+
     [SerializeField]
     private ItemObjectList itemObjectList;
 
@@ -32,8 +31,10 @@ public class UnitCreateManager : MonoBehaviour
     [SerializeField]
     private GameObject policePrefab;
 
-    [SerializeField]
+
     private GameObject unitCollector;
+    [SerializeField]
+    private GameObject interactableCollector;
     [SerializeField]
     private UnitStats unitStats;
     private InteractableBasics[] interactableList;
@@ -52,7 +53,8 @@ public class UnitCreateManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-
+        unitCollector = new GameObject("PlayerUnitCollector");
+        unitCollector.AddComponent<PlayerUnitCollector>();
         interactableList = new InteractableBasics[4];
         InteractableBasics interact1 = new InteractableBasics("cop1", "Garbage", new Vector3(10f, 0f, 0f), new Vector3(0f, 0f, 0f), 4f, 0f);
         InteractableBasics interact2 = new InteractableBasics("cop2", "TrashBin", new Vector3(20f, 0f, 0f), new Vector3(0f, 0f, 0f), 0f, 10f);
