@@ -9,12 +9,13 @@ public class Interactable : MonoBehaviour
     public Transform InteractableTransform;
 
     public float radius = 3f;
-
+    [SerializeField]
+    private Ring ringData;
     //bool isFocus = false;
     public GameObject interactMenu;
 
-    protected GameObject Menu;
-    protected Button yourButton;
+    //protected GameObject Menu;
+    //protected Button yourButton;
 
     public CollectableObject collectable;
     private Text[] collectableTexts;
@@ -34,24 +35,29 @@ public class Interactable : MonoBehaviour
     private Camera mainCamera;
 
     //Düğme basıldığında trigerlanacak
-
+    [SerializeField] private RingMenuController MainMenuPrefab;
+    private RingMenuController MainMenuInstance;
 
     public event Action onCollectButtonpressed;
     void Start()
     {
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        interactCanvas = GameObject.Find("CanvasInteractable").GetComponent<Canvas>();
-        Menu = Instantiate(interactMenu, Vector3.zero, Quaternion.identity, interactCanvas.transform);
-        Menu.name = interactName + "_Menu";
-        Menu.SetActive(false);
+        MainMenuInstance = Instantiate(MainMenuPrefab, GameObject.Find("CanvasInteractable").GetComponent<Canvas>().transform);
+        MainMenuInstance.CreatedMenu();
+        MainMenuInstance.gameObject.SetActive(false);
+
+        //interactCanvas = GameObject.Find("CanvasInteractable").GetComponent<Canvas>();
+        //Menu = Instantiate(interactMenu, Vector3.zero, Quaternion.identity, interactCanvas.transform);
+        //Menu.name = interactName + "_Menu";
+        //Menu.SetActive(false);
         maxAmount = collectable.maxAmount;
         minAmount = collectable.minAmount;
         interactSlot = collectable.interactSlot;
         maxInteractSlot = collectable.interactSlot;
         item = new Item(collectable.item);
-        collectableTexts = Menu.GetComponentsInChildren<Text>();
-        yourButton = Menu.GetComponentInChildren<Button>();
-        yourButton.onClick.AddListener(TaskOnClick);
+        //collectableTexts = Menu.GetComponentsInChildren<Text>();
+        //yourButton = Menu.GetComponentInChildren<Button>();
+        //yourButton.onClick.AddListener(TaskOnClick);
     }
 
     void Update()
@@ -67,45 +73,45 @@ public class Interactable : MonoBehaviour
                 isDepleted = false;
             }
         }
-        createMenu();
+        //createMenu();
 
     }
 
     private void createMenu()
     {
-        if (Menu.activeSelf)
-        {
-            Menu.transform.position = mainCamera.WorldToScreenPoint(transform.position);
+        //if (Menu.activeSelf)
+        //{
+        //    Menu.transform.position = mainCamera.WorldToScreenPoint(transform.position);
 
-            foreach (var child in collectableTexts)
-            {
-                if (child.name == "Amount")
-                {
-                    child.text = "Amount: " + CurrentAmount.ToString() + " / " + maxAmount.ToString();
-                }
-                else if (child.name == "Slot")
-                {
-                    child.text = "Slot: " + interactSlot.ToString() + " / " + maxInteractSlot.ToString();
-                }
-            }
-            if (!isDepleted)
-            {
-                if (isUnitSelected)
-                {
-                    if (interactSlot > 0)
-                    {
-                        yourButton.interactable = true;
-                    }
-                    else
-                    {
-                        yourButton.interactable = false;
-                    }
+        //    foreach (var child in collectableTexts)
+        //    {
+        //        if (child.name == "Amount")
+        //        {
+        //            child.text = "Amount: " + CurrentAmount.ToString() + " / " + maxAmount.ToString();
+        //        }
+        //        else if (child.name == "Slot")
+        //        {
+        //            child.text = "Slot: " + interactSlot.ToString() + " / " + maxInteractSlot.ToString();
+        //        }
+        //    }
+        //    if (!isDepleted)
+        //    {
+        //        if (isUnitSelected)
+        //        {
+        //            if (interactSlot > 0)
+        //            {
+        //                yourButton.interactable = true;
+        //            }
+        //            else
+        //            {
+        //                yourButton.interactable = false;
+        //            }
 
-                }
+        //        }
 
-            }
+        //    }
 
-        }
+        //}
     }
 
     public void SetInteractableSelected(bool isSelected)
@@ -120,43 +126,44 @@ public class Interactable : MonoBehaviour
         if (!isSelected)
         {
 
-            Menu.SetActive(false);
+            MainMenuInstance.gameObject.SetActive(false);
             return;
         }
         isUnitSelected = _isUnitSelected;
 
-        Menu.SetActive(true);
-        foreach (var child in collectableTexts)
-        {
-            if (child.name == "Title")
-            {
-                child.text = collectable.collectablename;
-            }
-            else if (child.name == "Description")
-            {
-                child.text = collectable.description;
+        MainMenuInstance.gameObject.SetActive(true);
+        MainMenuInstance.transform.position = mainCamera.WorldToScreenPoint(transform.position);
+        //foreach (var child in collectableTexts)
+        //{
+        //    if (child.name == "Title")
+        //    {
+        //        child.text = collectable.collectablename;
+        //    }
+        //    else if (child.name == "Description")
+        //    {
+        //        child.text = collectable.description;
 
-            }
+        //    }
 
-        }
+        //}
 
 
-        if (!isDepleted)
-        {
-            if (isUnitSelected)
-            {
-                yourButton.interactable = true;
-            }
-            else
-            {
-                yourButton.interactable = false;
-            }
+        //if (!isDepleted)
+        //{
+        //    if (isUnitSelected)
+        //    {
+        //        yourButton.interactable = true;
+        //    }
+        //    else
+        //    {
+        //        yourButton.interactable = false;
+        //    }
 
-        }
-        else
-        {
-            yourButton.interactable = false;
-        }
+        //}
+        //else
+        //{
+        //    yourButton.interactable = false;
+        //}
 
 
 

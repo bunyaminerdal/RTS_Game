@@ -3,7 +3,12 @@ guid: 8ee44b841d50ca246a984aac20a96fbf
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - InteractableTransform: {instanceID: 0}
+  - ringData: {instanceID: 0}
+  - interactMenu: {instanceID: 0}
+  - collectable: {instanceID: 0}
+  - MainMenuPrefab: {fileID: 5747161085045282057, guid: b409a6ed18c8eaa4d9c2e92bfb9046b1, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
