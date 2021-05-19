@@ -13,8 +13,14 @@ public class UnitCreateManager : MonoBehaviour
 
     private GameObject createdInteractable;
     private GameObject interactPrefab;
-
-
+    [Header("inventorys")]
+    [SerializeField]
+    private UserInterface unitInventoryDisplayPrefab;
+    [SerializeField]
+    private UserInterface unitEqInventoryDisplayPrefab;
+    [SerializeField]
+    private UserInterface unitInfoDisplayPrefab;
+    [Header("unit prefabs")]
     [SerializeField]
     private GameObject manPrefab;
     [SerializeField]
@@ -46,6 +52,9 @@ public class UnitCreateManager : MonoBehaviour
     private GameObject createdUnit;
     private GameObject unitPrefab;
     private Interactable interactableObject;
+    private UserInterface createdUnitInventoryScreen;
+    private UserInterface createdUnitEqInventoryScreen;
+    private UserInterface createdUnitInfoScreen;
 
     private PlayerUnitController[] units;
     private Interactable[] interactables;
@@ -68,8 +77,6 @@ public class UnitCreateManager : MonoBehaviour
         interactableList[1] = interact2;
         interactableList[2] = interact3;
         interactableList[3] = interact4;
-
-
         unitList = new UnitBasics[7];
         UnitBasics unit1 = new UnitBasics("Ali", "man", new Vector3(0f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(0f, 0.0833f, 0f), "cop1");
         UnitBasics unit2 = new UnitBasics("Cafer", "man1", new Vector3(2f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(2f, 0.0833f, 0f), "No interact");
@@ -199,11 +206,21 @@ public class UnitCreateManager : MonoBehaviour
             createdUnit.transform.position = unitList[i].position;
             createdUnit.transform.eulerAngles = unitList[i].rotation;
 
-            PlayerUnitController PlayerUnitController = createdUnit.GetComponent<PlayerUnitController>();
-            PlayerUnitController.unitName = unitList[i].unitName;
-            PlayerUnitController.unitType = unitList[i].unitType;
-            PlayerUnitController.clickMarkerTransform = clickMarkerTransform.transform;
-            PlayerUnitController.unitDestination = unitList[i].destination;
+            PlayerUnitController playerUnitController = createdUnit.GetComponent<PlayerUnitController>();
+            playerUnitController.unitName = unitList[i].unitName;
+            playerUnitController.unitType = unitList[i].unitType;
+            playerUnitController.clickMarkerTransform = clickMarkerTransform.transform;
+            playerUnitController.unitDestination = unitList[i].destination;
+
+            //create inventory display and attached to unit
+            createdUnitInventoryScreen = Instantiate(unitInventoryDisplayPrefab, createdUnit.transform);
+            playerUnitController.inventoryScreen = createdUnitInventoryScreen;
+            createdUnitEqInventoryScreen = Instantiate(unitEqInventoryDisplayPrefab, createdUnit.transform);
+            playerUnitController.eqInventoryScreen = createdUnitEqInventoryScreen;
+            createdUnitInfoScreen = Instantiate(unitInfoDisplayPrefab, createdUnit.transform);
+            playerUnitController.infoScreen = createdUnitInfoScreen;
+
+
             if (unitList[i].interactName != "No interact")
             {
                 SaveLoadHandlers.interactableCollectorGetInteracts?.Invoke();
@@ -214,9 +231,10 @@ public class UnitCreateManager : MonoBehaviour
                         interactableObject = interact;
                     }
                 }
-                PlayerUnitController.unitInteract = interactableObject;
+                playerUnitController.unitInteract = interactableObject;
             }
-            SaveLoadHandlers.UnitFrameClearAfterUnitCreated?.Invoke(PlayerUnitController);
+
+            SaveLoadHandlers.UnitFrameClearAfterUnitCreated?.Invoke(playerUnitController);
         }
     }
 

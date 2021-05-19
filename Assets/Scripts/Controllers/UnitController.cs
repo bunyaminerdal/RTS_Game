@@ -27,7 +27,6 @@ public class UnitController : MonoBehaviour
     public UnitStats unitStats;
     private bool isGathering;
 
-
     public GameObject clickMarker;
     public Interactable interact;
     public Transform clickMarkerTransform;
@@ -40,6 +39,9 @@ public class UnitController : MonoBehaviour
     private UnitInventory unitEqInventory = new UnitInventory(3);
     public UnitInventory unitEqInventoryStart = new UnitInventory(3);
 
+    public UserInterface inventoryScreen;
+    public UserInterface eqInventoryScreen;
+    public UserInterface infoScreen;
     private float distance;
 
     private float currentHealth;
@@ -56,8 +58,10 @@ public class UnitController : MonoBehaviour
     private Camera unitCam;
     public Texture2D unitTexture;
     private Rect rect;
+    private GameObject rightScreen;
     private void Start()
     {
+        rightScreen = FindObjectOfType<RightScreen>().gameObject;
         unitBoxController = FindObjectOfType<UnitBoxController>();
         unitCam = GetComponentInChildren<Camera>();
         rect = new Rect(0, 0, 100, 100);
@@ -135,6 +139,9 @@ public class UnitController : MonoBehaviour
             unitEqInventoryStart = null;
         }
         gatherTimer = unitStats.gatheringSpeed;
+
+
+
     }
     public void OnBeforeSlotUpdate(InventorySlot _slot)
     {
@@ -403,6 +410,20 @@ public class UnitController : MonoBehaviour
 
         isUnitSelected = isSelected;
         unitBoxController.onUnitSelected(GetComponent<PlayerUnitController>(), isSelected);
+        if (isSelected)
+        {
+            eqInventoryScreen.transform.SetParent(rightScreen.transform);
+            inventoryScreen.transform.SetParent(rightScreen.transform);
+            infoScreen.transform.SetParent(rightScreen.transform);
+
+        }
+        else
+        {
+            eqInventoryScreen.transform.SetParent(transform);
+            inventoryScreen.transform.SetParent(transform);
+            infoScreen.transform.SetParent(transform);
+
+        }
     }
 
     public bool isSelected()
@@ -571,6 +592,8 @@ public class UnitController : MonoBehaviour
     public void SetInventory(UnitInventory inventory)
     {
         unitInventory = inventory;
+        //inventory set
+        inventoryScreen.SetInventory(unitInventory);
     }
     public UnitInventory getUnitEqInventory()
     {
@@ -583,6 +606,7 @@ public class UnitController : MonoBehaviour
         {
             unitEqInventory.GetSlots[i].updateSlot(inventory.Container.Slots[i].ID, inventory.Container.Slots[i].item, inventory.Container.Slots[i].amount);
         }
+
     }
 
     //unitin modifierları update olunca çalışacak

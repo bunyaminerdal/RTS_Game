@@ -43,53 +43,30 @@ public abstract class UserInterface : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CreateSlots();
+
         if (unitInventory != null)
         {
             slotsOnInterface.UpdateSlotDisplay();
-            textOnInterface.UpdateTextDisplay();
+            //textOnInterface.UpdateTextDisplay();
         }
 
     }
-    public void SetInventory(UnitController _unit)
-    {
-        if (unit != _unit)
-        {
-            unitInventory = null;
-            unitEqInventory = null;
-            unit = null;
-            slotsOnInterface.Clear();
-            textOnInterface.Clear();
-            if (transform.childCount > 0)
-            {
-                for (int i = 0; i < transform.childCount; i++)
-                {
-                    Destroy(transform.GetChild(i).gameObject);
-                }
-            }
-        }
-        unit = _unit;
-        unitInventory = _unit.getUnitInventory();
-        unitEqInventory = _unit.getUnitEqInventory();
-
-    }
-
-    public void SetNullUnitInventory()
+    public void SetInventory(UnitInventory inventory)
     {
         unitInventory = null;
-        unitEqInventory = null;
-        unit = null;
         slotsOnInterface.Clear();
-        textOnInterface.Clear();
         if (transform.childCount > 0)
         {
             for (int i = 0; i < transform.childCount; i++)
             {
                 Destroy(transform.GetChild(i).gameObject);
             }
-
         }
+        unitInventory = inventory;
+        CreateSlots();
     }
+
+
 
     public abstract void CreateSlots();
 
@@ -124,7 +101,7 @@ public abstract class UserInterface : MonoBehaviour
             tempItem = new GameObject();
             var rt = tempItem.AddComponent<RectTransform>();
             rt.sizeDelta = new Vector2(60, 60);
-            tempItem.transform.SetParent(transform.parent);
+            tempItem.transform.SetParent(transform.parent.parent);
             var img = tempItem.AddComponent<Image>();
             img.sprite = slotsOnInterface[obj].item.uiDisplay;
             img.raycastTarget = false;

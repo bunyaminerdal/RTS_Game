@@ -55,23 +55,7 @@ public class PlayerManager : MonoBehaviour
             DeselectUnit(unit);
         }
     }
-    private void InventoryDisplay()
-    {
-        if (selectedUnits.Count == 1)
-        {
 
-            displayInventory.SetInventory(selectedUnits[0]);
-            displayEquipment.SetInventory(selectedUnits[0]);
-            displayInfo.SetInventory(selectedUnits[0]);
-
-        }
-        else if (selectedUnits.Count != 1)
-        {
-            displayInventory.SetNullUnitInventory();
-            displayEquipment.SetNullUnitInventory();
-            displayInfo.SetNullUnitInventory();
-        }
-    }
     #region alakasiz
 
     private List<Vector3> GetPositionListAround(Vector3 startPosition, float[] ringDistanceArray, int[] ringPositionCountArray)
@@ -134,7 +118,7 @@ public class PlayerManager : MonoBehaviour
             unit.SetSelected(true);
         }
 
-        InventoryDisplay();
+        //InventoryDisplay();
     }
     public void SelectUnits(PlayerUnitController[] playerUnits, bool isMultiSelection = false)
     {
@@ -205,7 +189,7 @@ public class PlayerManager : MonoBehaviour
     {
         selectedUnits.RemoveAll(u => u == unit);
         unit.SetSelected(false);
-        InventoryDisplay();
+        //InventoryDisplay();
     }
 
     public void DeselectUnits()
@@ -215,7 +199,7 @@ public class PlayerManager : MonoBehaviour
             unit.SetSelected(false);
         }
         selectedUnits.Clear();
-        InventoryDisplay();
+        //InventoryDisplay();
     }
 
     public void DeselectInteractable()
