@@ -38,4 +38,8 @@ public class UnitInventoryScreen : UserInterface
         slotsOnInterface.UpdateSlotDisplay();
     }
 
+    public override void UpdateUnit(PlayerUnitController _unit)
+    {
+        //no unit
+    }
 }
