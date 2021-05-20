@@ -7,29 +7,35 @@ public class UnitInventoryScreen : UserInterface
 {
     public override void CreateSlots()
     {
-        if (unitInventory!=null)
-        {       
-            if(transform.childCount == 0)
-            {
-                for (int i = 0; i < unitInventory.Container.Slots.Length; i++)
-                {
-                    unitInventory.Container.Slots[i].parent = this;
-                }
-                slotsOnInterface = new Dictionary<GameObject,InventorySlot>();
-                for (int i = 0; i < unitInventory.Container.Slots.Length; i++)
-                {
-                    GameObject obj = Instantiate(inventoryPrefab, Vector3.zero, Quaternion.identity, transform);                    
-
-                    AddEvent(obj,EventTriggerType.PointerEnter, delegate {OnEnter(obj);});
-                    AddEvent(obj,EventTriggerType.PointerExit, delegate {OnExit(obj);});
-                    AddEvent(obj,EventTriggerType.BeginDrag, delegate {OnDragStart(obj);});
-                    AddEvent(obj,EventTriggerType.EndDrag, delegate {OnDragEnd(obj);});
-                    AddEvent(obj,EventTriggerType.Drag, delegate {OnDrag(obj);});
-
-                    slotsOnInterface.Add(obj, unitInventory.Container.Slots[i]);
-                }
-            }     
-            
+        if (transform.childCount <= 0) return;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            GameObject InventorySlot = transform.GetChild(i).gameObject;
+            AddEvent(InventorySlot, EventTriggerType.PointerEnter, delegate { OnEnter(InventorySlot); });
+            AddEvent(InventorySlot, EventTriggerType.PointerExit, delegate { OnExit(InventorySlot); });
+            AddEvent(InventorySlot, EventTriggerType.BeginDrag, delegate { OnDragStart(InventorySlot); });
+            AddEvent(InventorySlot, EventTriggerType.EndDrag, delegate { OnDragEnd(InventorySlot); });
+            AddEvent(InventorySlot, EventTriggerType.Drag, delegate { OnDrag(InventorySlot); });
         }
+
     }
+
+    public override void SetNullUnitInventory()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public override void UpdateSlots(UnitInventory inventory)
+    {
+        gameObject.SetActive(true);
+        slotsOnInterface.Clear();
+        unitInventory = inventory;
+        for (int i = 0; i < unitInventory.Container.Slots.Length; i++)
+        {
+            unitInventory.Container.Slots[i].parent = this;
+            slotsOnInterface.Add(transform.GetChild(i).gameObject, unitInventory.Container.Slots[i]);
+        }
+        slotsOnInterface.UpdateSlotDisplay();
+    }
+
 }

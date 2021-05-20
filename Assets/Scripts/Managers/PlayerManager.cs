@@ -51,16 +51,16 @@ public class PlayerManager : MonoBehaviour
         if (selectedUnits.Count == 1)
         {
 
-            displayInventory.SetInventory(selectedUnits[0]);
-            displayEquipment.SetInventory(selectedUnits[0]);
-            displayInfo.SetInventory(selectedUnits[0]);
+
+            displayInventory.UpdateSlots(selectedUnits[0].getUnitInventory());
+            displayEquipment.UpdateSlots(selectedUnits[0].getUnitEqInventory());
 
         }
         else if (selectedUnits.Count != 1)
         {
             displayInventory.SetNullUnitInventory();
             displayEquipment.SetNullUnitInventory();
-            displayInfo.SetNullUnitInventory();
+
         }
     }
     #region alakasiz

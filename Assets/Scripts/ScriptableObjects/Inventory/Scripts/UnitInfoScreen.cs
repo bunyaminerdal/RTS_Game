@@ -7,17 +7,27 @@ public class UnitInfoScreen : UserInterface
 {
     public override void CreateSlots()
     {
-        if (unit!=null)
-        {
-            if (transform.childCount == 0)
-            {
-                for (int i = 0; i < 7; i++)
-                {
-                    GameObject obj = Instantiate(inventoryPrefab, Vector3.zero, Quaternion.identity, transform);
-                    textOnInterface.Add(obj, unit.attributes[i]);                   
+        // if (unit != null)
+        // {
+        //     if (transform.childCount == 0)
+        //     {
+        //         for (int i = 0; i < 7; i++)
+        //         {
+        //             GameObject obj = Instantiate(inventoryPrefab, Vector3.zero, Quaternion.identity, transform);
+        //             textOnInterface.Add(obj, unit.attributes[i]);
 
-                }
-            }
-        }
+        //         }
+        //     }
+        // }
+    }
+
+    public override void SetNullUnitInventory()
+    {
+        //throw new System.NotImplementedException();
+    }
+
+    public override void UpdateSlots(UnitInventory inventory)
+    {
+        //throw new System.NotImplementedException();
     }
 }
