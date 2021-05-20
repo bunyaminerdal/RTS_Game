@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1019640741406875991}
   - component: {fileID: 3736472073944223020}
   - component: {fileID: 5037759181520289467}
-  - component: {fileID: 2880021201701695371}
+  - component: {fileID: 5531459092898630234}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -35,8 +35,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 70, y: 70}
-  m_SizeDelta: {x: 90, y: 90}
+  m_AnchoredPosition: {x: 103, y: 80}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3736472073944223020
 CanvasRenderer:
@@ -76,7 +76,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2880021201701695371
+--- !u!114 &5531459092898630234
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -164,7 +164,7 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1998853039828908989}
-  m_CullTransparentMesh: 0
+  m_CullTransparentMesh: 1
 --- !u!114 &435108055067286391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,14 +185,14 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 39492ffe54935174ebf7878ccbc89c34, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3545e5dda92c6a847b22e01e8aca16dc, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 0.321
   m_FillClockwise: 1
-  m_FillOrigin: 2
+  m_FillOrigin: 3
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!1 &7800968296349354777

@@ -13,13 +13,17 @@ public class PlayerManager : MonoBehaviour
     public UserInterface displayInventory;
     public UserInterface displayEquipment;
     public UserInterface displayInfo;
-    
+    [SerializeField] private RingMenuController MainMenuPrefab;
+    protected RingMenuController MainMenuInstance;
 
 
     private void Awake()
     {
         cameraMain = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        
+        MainMenuInstance = Instantiate(MainMenuPrefab, GameObject.Find("CanvasInteractable").GetComponent<Canvas>().transform);
+        // MainMenuInstance.location = transform;
+        MainMenuInstance.CreatedMenu();
+        MainMenuInstance.gameObject.SetActive(false);
     }
 
     private void OnEnable()
@@ -145,7 +149,10 @@ public class PlayerManager : MonoBehaviour
         else
         {
             interactable.OpenInteractMenu(true, true);
-        }        
+        }
+        //ringmenu
+
+        MainMenuInstance.gameObject.SetActive(true);
 
     }
 
@@ -199,6 +206,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (selectedInteractable != null)
         {
+            MainMenuInstance.gameObject.SetActive(false);
             selectedInteractable.onCollectButtonpressed -= İnteractable_onCollectButtonpressed;
             selectedInteractable.SetInteractableSelected(false);
             selectedInteractable.OpenInteractMenu(false, false);
