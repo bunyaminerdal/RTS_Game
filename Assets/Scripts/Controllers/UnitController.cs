@@ -59,11 +59,15 @@ public class UnitController : MonoBehaviour
     public Texture2D unitTexture;
     private Rect rect;
     private GameObject rightScreen;
-    private void Start()
+    private void Awake()
     {
         rightScreen = FindObjectOfType<RightScreen>().gameObject;
         unitBoxController = FindObjectOfType<UnitBoxController>();
         unitCam = GetComponentInChildren<Camera>();
+    }
+    private void Start()
+    {
+
         rect = new Rect(0, 0, 100, 100);
         unitRenderTexture = new RenderTexture(copyRenderTexture);
         unitTexture = new Texture2D(100, 100, TextureFormat.RGBAFloat, false);
@@ -415,6 +419,8 @@ public class UnitController : MonoBehaviour
             eqInventoryScreen.transform.SetParent(rightScreen.transform);
             inventoryScreen.transform.SetParent(rightScreen.transform);
             infoScreen.transform.SetParent(rightScreen.transform);
+            inventoryScreen.IsDisplayed = true;
+            eqInventoryScreen.IsDisplayed = true;
 
         }
         else
@@ -422,7 +428,8 @@ public class UnitController : MonoBehaviour
             eqInventoryScreen.transform.SetParent(transform);
             inventoryScreen.transform.SetParent(transform);
             infoScreen.transform.SetParent(transform);
-
+            inventoryScreen.IsDisplayed = false;
+            inventoryScreen.IsDisplayed = false;
         }
     }
 
@@ -592,7 +599,7 @@ public class UnitController : MonoBehaviour
     public void SetInventory(UnitInventory inventory)
     {
         unitInventory = inventory;
-        //inventory set
+        //inventory display set
         inventoryScreen.SetInventory(unitInventory);
     }
     public UnitInventory getUnitEqInventory()
@@ -606,6 +613,7 @@ public class UnitController : MonoBehaviour
         {
             unitEqInventory.GetSlots[i].updateSlot(inventory.Container.Slots[i].ID, inventory.Container.Slots[i].item, inventory.Container.Slots[i].amount);
         }
+        eqInventoryScreen.SetInventory(unitEqInventory);
 
     }
 

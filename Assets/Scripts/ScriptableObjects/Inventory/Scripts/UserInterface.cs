@@ -16,6 +16,9 @@ public abstract class UserInterface : MonoBehaviour
     public Dictionary<GameObject, InventorySlot> slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
     public Dictionary<GameObject, Attribute> textOnInterface = new Dictionary<GameObject, Attribute>();
     private PlayerInputActions UIActions;
+    private bool isDisplayed;
+    public bool IsDisplayed { get => isDisplayed; set => isDisplayed = value; }
+
     private void Awake()
     {
         UIActions = new PlayerInputActions();
@@ -32,9 +35,6 @@ public abstract class UserInterface : MonoBehaviour
     {
         unitInventory = new UnitInventory(6);
         unitEqInventory = new UnitInventory(3);
-        unitInventory = null;
-        unitEqInventory = null;
-        unit = null;
         AddEvent(gameObject, EventTriggerType.PointerEnter, delegate { OnEnterInterface(gameObject); });
         AddEvent(gameObject, EventTriggerType.PointerExit, delegate { OnExitInterface(gameObject); });
 
@@ -44,7 +44,7 @@ public abstract class UserInterface : MonoBehaviour
     void Update()
     {
 
-        if (unitInventory != null)
+        if (isDisplayed)
         {
             slotsOnInterface.UpdateSlotDisplay();
             //textOnInterface.UpdateTextDisplay();
@@ -53,19 +53,10 @@ public abstract class UserInterface : MonoBehaviour
     }
     public void SetInventory(UnitInventory inventory)
     {
-        unitInventory = null;
-        slotsOnInterface.Clear();
-        if (transform.childCount > 0)
-        {
-            for (int i = 0; i < transform.childCount; i++)
-            {
-                Destroy(transform.GetChild(i).gameObject);
-            }
-        }
         unitInventory = inventory;
         CreateSlots();
+        slotsOnInterface.UpdateSlotDisplay();
     }
-
 
 
     public abstract void CreateSlots();
