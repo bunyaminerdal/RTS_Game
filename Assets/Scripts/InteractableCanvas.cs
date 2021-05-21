@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class InteractableCanvas : MonoBehaviour
 {
-    private MenuSelector[] menus;
     private void OnEnable()
     {
         InteractableMenuEventHandler.ClearInteractMenus.AddListener(ClearAllInteractableMenus);

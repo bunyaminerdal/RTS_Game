@@ -10,12 +10,6 @@ public static class SaveLoadHandlers
     public static UnityEvent<float> PlayerManagerRotationYLoad = new UnityEvent<float>();
     public static UnityEvent<float> VirtualCamOffsetLoad = new UnityEvent<float>();
 
-    public static UnityEvent playerUnitCollectorGetUnits = new UnityEvent();
-    public static UnityEvent<PlayerUnitController[]> playerUnitCollectorSetUnits = new UnityEvent<PlayerUnitController[]>();
-
-    public static UnityEvent interactableCollectorGetInteracts = new UnityEvent();
-    public static UnityEvent<Interactable[]> interactableCollectorSetInteracts = new UnityEvent<Interactable[]>();
-
     public static UnityEvent ClearClickMarkers = new UnityEvent();
 
     public static UnityEvent<InteractableBasics[]> SetInteractableBasicsLoadingForCreate = new UnityEvent<InteractableBasics[]>();

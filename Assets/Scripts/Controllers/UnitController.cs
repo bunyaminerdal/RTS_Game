@@ -56,6 +56,7 @@ public class UnitController : MonoBehaviour
     private Camera unitCam;
     public Texture2D unitTexture;
     private Rect rect;
+   
     private void Start()
     {
         unitBoxController = FindObjectOfType<UnitBoxController>();

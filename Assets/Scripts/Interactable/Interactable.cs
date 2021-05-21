@@ -1,11 +1,13 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 
 public class Interactable : MonoBehaviour
 {
+    public static List<Interactable> AllInteractables { get; private set; }
     public Transform InteractableTransform;
 
     public float radius = 3f;
@@ -36,7 +38,19 @@ public class Interactable : MonoBehaviour
     //Düğme basıldığında trigerlanacak
 
 
-    public event Action onCollectButtonpressed;
+    public event Action OnCollectButtonpressed;
+
+    private void OnEnable()
+    {
+        if (AllInteractables == null)
+            AllInteractables = new List<Interactable>();
+        AllInteractables.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        AllInteractables.Remove(this);
+    }
     void Start()
     {
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
@@ -166,7 +180,7 @@ public class Interactable : MonoBehaviour
 
     void TaskOnClick()
     {
-        onCollectButtonpressed?.Invoke();
+        OnCollectButtonpressed?.Invoke();
     }
 
     public float getCurrentAmount()
