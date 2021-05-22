@@ -10,11 +10,9 @@ public class SaveManager : MonoBehaviour
 
     private PlayerUnitController[] units;
     private Interactable[] interacts;
-    private UnitCreateManager unitCreateManager;
     private Vector3 playerManagerTransform;
     private float playerManagerRotationY;
     private float virtualCamOffset;
-    private ClickMarker[] clickMarkers;
 
     public List<GameData> gameDataList { get; private set; }
 
@@ -32,7 +30,6 @@ public class SaveManager : MonoBehaviour
         }
 
 
-        unitCreateManager = transform.GetComponent<UnitCreateManager>();
     }
 
     private void OnEnable()
@@ -66,8 +63,6 @@ public class SaveManager : MonoBehaviour
         {
             SaveGameData();
         }
-
-
 
     }
 
@@ -388,10 +383,6 @@ public class SaveManager : MonoBehaviour
         SaveLoadHandlers.VirtualCamOffsetLoad?.Invoke(data.myControllerData.virtualCamOffsetZ);
     }
 
-    private void SetClickMarkers(ClickMarker[] arg0)
-    {
-        clickMarkers = arg0;
-    }
     private void PlayerManagerTransform(float arg0, float arg1, float arg2)
     {
         playerManagerTransform = new Vector3(arg0, arg1, arg2);

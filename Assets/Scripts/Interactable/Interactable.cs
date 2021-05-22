@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Collections.Generic;
 
 public class Interactable : MonoBehaviour
 {
-    public static List<Interactable> AllInteractables;
+    public static List<Interactable> AllInteractables { get; private set; }
     public Transform InteractableTransform;
 
     public float radius = 3f;
@@ -43,11 +44,10 @@ public class Interactable : MonoBehaviour
     private void OnEnable()
     {
         if (AllInteractables == null)
-        {
             AllInteractables = new List<Interactable>();
-        }
         AllInteractables.Add(this);
     }
+
     private void OnDisable()
     {
         AllInteractables.Remove(this);
@@ -181,7 +181,7 @@ public class Interactable : MonoBehaviour
 
     void TaskOnClick()
     {
-        onCollectButtonpressed?.Invoke();
+        OnCollectButtonpressed?.Invoke();
     }
 
     public float getCurrentAmount()

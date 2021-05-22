@@ -102,8 +102,6 @@ public class UnitCreateManager : MonoBehaviour
 
     }
 
-
-
     private void OnDisable()
     {
         SaveLoadHandlers.SetInteractableBasicsLoadingForCreate.RemoveListener(InteractableListCreate);

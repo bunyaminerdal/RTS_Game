@@ -9,9 +9,12 @@ public class PlayerManager : MonoBehaviour
     RaycastHit hit1;
     private List<PlayerUnitController> selectedUnits = new List<PlayerUnitController>();
     private Interactable selectedInteractable;
-    public UserInterface displayInventory;
-    public UserInterface displayEquipment;
-    public UserInterface displayInfo;
+    [SerializeField]
+    private UserInterface displayInventory;
+    [SerializeField]
+    private UserInterface displayEquipment;
+    [SerializeField]
+    private UserInterface displayInfo;
 
     private void Awake()
     {
@@ -147,7 +150,7 @@ public class PlayerManager : MonoBehaviour
 
         }
         selectedInteractable = interactable;
-        interactable.onCollectButtonpressed += İnteractable_onCollectButtonpressed;
+        interactable.OnCollectButtonpressed += İnteractable_onCollectButtonpressed;
         interactable.SetInteractableSelected(true);
         if (selectedUnits.Count == 0)
         {
@@ -210,7 +213,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (selectedInteractable != null)
         {
-            selectedInteractable.onCollectButtonpressed -= İnteractable_onCollectButtonpressed;
+            selectedInteractable.OnCollectButtonpressed -= İnteractable_onCollectButtonpressed;
             selectedInteractable.SetInteractableSelected(false);
             selectedInteractable.OpenInteractMenu(false, false);
             selectedInteractable = null;

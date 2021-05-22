@@ -24,8 +24,7 @@ public class InteractCommand : Command
             if (Physics.Raycast(camRay, out hit))
             {
                 //Do something with that data herbiri i�in ayr� state e girecek
-                hit.transform.TryGetComponent<EnemyUnitController>(out EnemyUnitController enemyUnit);
-                if (enemyUnit != null)
+                if (hit.transform.TryGetComponent<EnemyUnitController>(out EnemyUnitController enemyUnit))
                 {
                     playerManager.SelectedEnemy(enemyUnit);
                 }
@@ -34,20 +33,17 @@ public class InteractCommand : Command
                 //ekip arkadaşımızla nasıl interaction olacağı belli değil
                 hit.transform.TryGetComponent<PlayerUnitController>(out PlayerUnitController playerUnit);
                 //Debug.Log(playerUnit);
-                hit.transform.TryGetComponent<Interactable>(out Interactable interact);
-                if (interact != null)
+                if (hit.transform.TryGetComponent<Interactable>(out Interactable interact))
                 {
                     playerManager.SelectedInteractable(interact);
                 }
                 //Debug.Log(interact);
-                hit.transform.TryGetComponent<GroundIneraction>(out GroundIneraction ground);
-                if (ground != null)
+                if (hit.transform.TryGetComponent<GroundIneraction>(out GroundIneraction ground))
                 {
                     playerManager.MoveAction(hit.point);
                 }
                 //Debug.Log(ground);
-                hit.transform.TryGetComponent<groundItem>(out groundItem groundItem);
-                if (groundItem != null)
+                if (hit.transform.TryGetComponent<groundItem>(out groundItem groundItem))
                 {
                     playerManager.selectedGroundItem(groundItem);
                 }
