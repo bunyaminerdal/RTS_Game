@@ -43,4 +43,9 @@ public class UnitInventoryScreen : UserInterface
     {
         //no unit
     }
+
+    public override void UpdateInteractable(Interactable _interact)
+    {
+        //no interact
+    }
 }

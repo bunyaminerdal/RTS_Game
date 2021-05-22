@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Attribute 
+public class Attribute
 {
     [System.NonSerialized]
     public UnitController parent;
@@ -15,7 +15,7 @@ public class Attribute
     {
         parent = _parent;
         value = new ModifiableInt(AttributeModified);
-        stringValue = new ModifiableString();
+        stringValue = new ModifiableString(AttributeModified);
     }
     public void AttributeModified()
     {

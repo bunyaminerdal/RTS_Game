@@ -33,6 +33,7 @@ public abstract class UserInterface : MonoBehaviour
     public abstract void CreateSlots();
     public abstract void UpdateSlots(UnitInventory inventory);
     public abstract void UpdateUnit(PlayerUnitController _unit);
+    public abstract void UpdateInteractable(Interactable _interact);
     public abstract void CloseScreen();
 
     protected void AddEvent(GameObject obj, EventTriggerType type, UnityAction<BaseEventData> action)

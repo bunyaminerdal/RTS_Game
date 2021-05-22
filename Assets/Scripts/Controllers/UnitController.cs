@@ -56,7 +56,7 @@ public class UnitController : MonoBehaviour
     private Camera unitCam;
     public Texture2D unitTexture;
     private Rect rect;
-   
+
     private void Start()
     {
         unitBoxController = FindObjectOfType<UnitBoxController>();
@@ -113,8 +113,8 @@ public class UnitController : MonoBehaviour
         }
         CurrentHealth = unitStats.health;
         //attributelar içinde name ve status ayarlama
-        attributes[0].stringValue.SetModifier(unitName);
-        attributes[1].stringValue.SetModifier("Unit Status");
+        attributes[0].stringValue.BaseValue = unitName;
+        attributes[1].stringValue.BaseValue = "Unit Status";
         attributes[2].value.BaseValue = (int)unitStats.health;
         attributes[3].value.BaseValue = unitStats.armour;
         attributes[4].value.BaseValue = unitStats.attackSpeed;
@@ -591,7 +591,7 @@ public class UnitController : MonoBehaviour
     {
         if (_attribute.type == Attributes.Status)
         {
-            Debug.Log("Name was changed");
+            //Debug.Log("Name was changed");
         }
 
     }

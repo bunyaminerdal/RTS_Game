@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
-
 
 public class Interactable : MonoBehaviour
 {
     public static List<Interactable> AllInteractables { get; private set; }
+    public Action OnCollectButtonpressed { get; internal set; }
+
     public Transform InteractableTransform;
 
     public float radius = 3f;
@@ -37,9 +37,6 @@ public class Interactable : MonoBehaviour
     private Camera mainCamera;
 
     //Düğme basıldığında trigerlanacak
-
-
-    public event Action onCollectButtonpressed;
 
     private void OnEnable()
     {

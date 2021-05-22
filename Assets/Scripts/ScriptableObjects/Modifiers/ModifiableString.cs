@@ -36,10 +36,10 @@ public class ModifiableString
 
     public void SetModifier(string _string)
     {
-        ModifiedValue = _string;
+        modifiedValue = _string;
         if (ValueModified != null)
             ValueModified.Invoke();
 
-    }    
+    }
 }
 

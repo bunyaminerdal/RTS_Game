@@ -32,4 +32,9 @@ public class UnitInfoScreen : UserInterface
             textOnInterface.Add(transform.GetChild(i).gameObject, unit.attributes[i]);
         }
     }
+
+    public override void UpdateInteractable(Interactable _interact)
+    {
+        // no interact
+    }
 }
