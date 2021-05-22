@@ -100,9 +100,6 @@ public class UnitCreateManager : MonoBehaviour
         SaveLoadHandlers.SetItemAttBasicsLoadingForCreate.AddListener(ItemAttListCreate);
         SaveLoadHandlers.CreatorFuncEvent.AddListener(CreatorFunc);
 
-        SaveLoadHandlers.playerUnitCollectorSetUnits.AddListener(GetUnits);
-        SaveLoadHandlers.interactableCollectorSetInteracts.AddListener(GetInteracts);
-
     }
 
 
@@ -116,16 +113,8 @@ public class UnitCreateManager : MonoBehaviour
         SaveLoadHandlers.SetItemAttBasicsLoadingForCreate.RemoveListener(ItemAttListCreate);
         SaveLoadHandlers.CreatorFuncEvent.RemoveListener(CreatorFunc);
 
-        SaveLoadHandlers.playerUnitCollectorSetUnits.RemoveListener(GetUnits);
     }
-    private void GetInteracts(Interactable[] arg0)
-    {
-        interactables = arg0;
-    }
-    private void GetUnits(PlayerUnitController[] arg0)
-    {
-        units = arg0;
-    }
+
     private void ItemAttListCreate(ItemAttributeBasics[] arg0)
     {
         itemAttributeList = arg0;
@@ -206,7 +195,7 @@ public class UnitCreateManager : MonoBehaviour
             PlayerUnitController.unitDestination = unitList[i].destination;
             if (unitList[i].interactName != "No interact")
             {
-                SaveLoadHandlers.interactableCollectorGetInteracts?.Invoke();
+                interactables = Interactable.AllInteractables.ToArray();
                 foreach (Interactable interact in interactables)
                 {
                     if (unitList[i].interactName == interact.interactName)
@@ -252,7 +241,7 @@ public class UnitCreateManager : MonoBehaviour
     }
     void CreateInventory()
     {
-        SaveLoadHandlers.playerUnitCollectorGetUnits?.Invoke();
+        units = PlayerUnitController.AllPlayerUnits.ToArray();
         foreach (PlayerUnitController unit in units)
         {
             foreach (InventoryBasics inventory in inventoryList)

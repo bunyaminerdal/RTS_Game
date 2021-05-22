@@ -57,9 +57,9 @@ public class PlayerManager : MonoBehaviour
         }
         else if (selectedUnits.Count != 1)
         {
-            displayInventory.SetNullUnitInventory();
-            displayEquipment.SetNullUnitInventory();
-            displayInfo.SetNullUnitInventory();
+            displayInventory.CloseScreen();
+            displayEquipment.CloseScreen();
+            displayInfo.CloseScreen();
 
         }
     }

@@ -18,10 +18,7 @@ public abstract class UserInterface : MonoBehaviour
 
     void Start()
     {
-        unit = null;
-        unitInventory = null;
-        AddEvent(gameObject, EventTriggerType.PointerEnter, delegate { OnEnterInterface(gameObject); });
-        AddEvent(gameObject, EventTriggerType.PointerExit, delegate { OnExitInterface(gameObject); });
+
         CreateSlots();
         gameObject.SetActive(false);
     }
@@ -36,7 +33,7 @@ public abstract class UserInterface : MonoBehaviour
     public abstract void CreateSlots();
     public abstract void UpdateSlots(UnitInventory inventory);
     public abstract void UpdateUnit(PlayerUnitController _unit);
-    public abstract void SetNullUnitInventory();
+    public abstract void CloseScreen();
 
     protected void AddEvent(GameObject obj, EventTriggerType type, UnityAction<BaseEventData> action)
     {

@@ -42,9 +42,6 @@ public class SaveManager : MonoBehaviour
         SaveLoadHandlers.PlayerManagerTransform.AddListener(PlayerManagerTransform);
         SaveLoadHandlers.PlayerManagerRotationY.AddListener(PlayerManagerRotationY);
         SaveLoadHandlers.VirtualCamOffset.AddListener(VirtualCamOffset);
-        SaveLoadHandlers.playerUnitCollectorSetUnits.AddListener(SetUnits);
-        SaveLoadHandlers.interactableCollectorSetInteracts.AddListener(SetInteracts);
-
     }
 
 
@@ -55,9 +52,6 @@ public class SaveManager : MonoBehaviour
         SaveLoadHandlers.PlayerManagerTransform.RemoveListener(PlayerManagerTransform);
         SaveLoadHandlers.PlayerManagerRotationY.RemoveListener(PlayerManagerRotationY);
         SaveLoadHandlers.VirtualCamOffset.RemoveListener(VirtualCamOffset);
-        SaveLoadHandlers.playerUnitCollectorSetUnits.RemoveListener(SetUnits);
-        SaveLoadHandlers.interactableCollectorSetInteracts.RemoveListener(SetInteracts);
-
     }
     void Start()
     {
@@ -79,8 +73,8 @@ public class SaveManager : MonoBehaviour
 
     public void Save(string gameName)
     {
-        SaveLoadHandlers.playerUnitCollectorGetUnits?.Invoke();
-        SaveLoadHandlers.interactableCollectorGetInteracts?.Invoke();
+        units = PlayerUnitController.AllPlayerUnits.ToArray();
+        interacts = Interactable.AllInteractables.ToArray();
         try
         {
             BinaryFormatter bf = new BinaryFormatter();
@@ -140,8 +134,8 @@ public class SaveManager : MonoBehaviour
 
     public void QuickSave()
     {
-        SaveLoadHandlers.playerUnitCollectorGetUnits?.Invoke();
-        SaveLoadHandlers.interactableCollectorGetInteracts?.Invoke();
+        units = PlayerUnitController.AllPlayerUnits.ToArray();
+        interacts = Interactable.AllInteractables.ToArray();
         try
         {
             BinaryFormatter bf = new BinaryFormatter();
@@ -393,14 +387,7 @@ public class SaveManager : MonoBehaviour
         SaveLoadHandlers.PlayerManagerRotationYLoad?.Invoke(data.myControllerData.rotationy);
         SaveLoadHandlers.VirtualCamOffsetLoad?.Invoke(data.myControllerData.virtualCamOffsetZ);
     }
-    private void SetInteracts(Interactable[] arg0)
-    {
-        interacts = arg0;
-    }
-    private void SetUnits(PlayerUnitController[] arg0)
-    {
-        units = arg0;
-    }
+
     private void SetClickMarkers(ClickMarker[] arg0)
     {
         clickMarkers = arg0;

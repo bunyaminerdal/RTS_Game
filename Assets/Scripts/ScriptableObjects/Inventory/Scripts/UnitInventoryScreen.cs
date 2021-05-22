@@ -17,10 +17,11 @@ public class UnitInventoryScreen : UserInterface
             AddEvent(InventorySlot, EventTriggerType.EndDrag, delegate { OnDragEnd(InventorySlot); });
             AddEvent(InventorySlot, EventTriggerType.Drag, delegate { OnDrag(InventorySlot); });
         }
-
+        AddEvent(gameObject, EventTriggerType.PointerEnter, delegate { OnEnterInterface(gameObject); });
+        AddEvent(gameObject, EventTriggerType.PointerExit, delegate { OnExitInterface(gameObject); });
     }
 
-    public override void SetNullUnitInventory()
+    public override void CloseScreen()
     {
         gameObject.SetActive(false);
     }

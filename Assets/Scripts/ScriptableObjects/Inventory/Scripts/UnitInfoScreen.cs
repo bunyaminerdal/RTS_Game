@@ -12,7 +12,7 @@ public class UnitInfoScreen : UserInterface
 
     }
 
-    public override void SetNullUnitInventory()
+    public override void CloseScreen()
     {
         gameObject.SetActive(false);
     }

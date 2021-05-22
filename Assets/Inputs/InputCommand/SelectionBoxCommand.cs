@@ -11,6 +11,7 @@ public class SelectionBoxCommand : Command
     private Vector3 mouseEndPosition;
     private bool isDragging;
     private PlayerManager playerManager;
+    private PlayerUnitController[] playerUnits;
 
     private void Awake()
     {
@@ -44,10 +45,11 @@ public class SelectionBoxCommand : Command
     public override void EndWithVector2(Vector2 vector2, bool isMultiSelection)
     {
         if (!isDragging) return;
+        playerUnits = PlayerUnitController.AllPlayerUnits.ToArray();
         List<PlayerUnitController> playerUnitControllers = new List<PlayerUnitController>();
         var viewportBounds = ScreenHelper.GetViewportBounds(cameraMain, mouseStartPositon, vector2);
         //DeselectUnits();
-        foreach (var selectableObject in FindObjectsOfType<PlayerUnitController>())
+        foreach (var selectableObject in playerUnits)
         {
             if (viewportBounds.Contains(cameraMain.WorldToViewportPoint(selectableObject.transform.position)))
             {

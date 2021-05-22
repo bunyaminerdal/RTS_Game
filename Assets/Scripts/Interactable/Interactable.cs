@@ -2,10 +2,12 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 
 public class Interactable : MonoBehaviour
 {
+    public static List<Interactable> AllInteractables;
     public Transform InteractableTransform;
 
     public float radius = 3f;
@@ -37,6 +39,19 @@ public class Interactable : MonoBehaviour
 
 
     public event Action onCollectButtonpressed;
+
+    private void OnEnable()
+    {
+        if (AllInteractables == null)
+        {
+            AllInteractables = new List<Interactable>();
+        }
+        AllInteractables.Add(this);
+    }
+    private void OnDisable()
+    {
+        AllInteractables.Remove(this);
+    }
     void Start()
     {
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
