@@ -9,7 +9,7 @@ public class ModifiableString
     [SerializeField]
     private string baseValue;
 
-    public string BaseValue { get => baseValue; set => baseValue = value; }
+    public string BaseValue { get => baseValue; set { baseValue = value; UpdateModifiedValue(); } }
 
 
     [SerializeField]
@@ -25,21 +25,11 @@ public class ModifiableString
             ValueModified += method;
     }
 
-    public void RegisterModEvent(ModifiedEvent method)
-    {
-        ValueModified += method;
-    }
-    public void UnregisterModEvent(ModifiedEvent method)
-    {
-        ValueModified -= method;
-    }
-
-    public void SetModifier(string _string)
-    {
-        modifiedValue = _string;
+    public void UpdateModifiedValue()
+    {        
+        ModifiedValue = baseValue ;
         if (ValueModified != null)
             ValueModified.Invoke();
-
     }
 }
 

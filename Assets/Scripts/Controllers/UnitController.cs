@@ -256,7 +256,7 @@ public class UnitController : MonoBehaviour
         if (isDead)
         {
             if (attributes[1].stringValue.ModifiedValue != "Dead")
-                attributes[1].stringValue.SetModifier("Dead");
+                attributes[1].stringValue.BaseValue ="Dead";
             animator.SetBool("isDeath", true);
             return;
         }
@@ -272,7 +272,7 @@ public class UnitController : MonoBehaviour
             }
             if (attributes[1].stringValue.ModifiedValue != "Idle")
             {
-                attributes[1].stringValue.SetModifier("Idle");
+                attributes[1].stringValue.BaseValue ="Idle";
                 animator.SetFloat("attackTimer", 1);
                 animator.SetBool("isRunning", false);
                 animator.SetBool("isAttacking", false);
@@ -301,7 +301,7 @@ public class UnitController : MonoBehaviour
             }
             if (attributes[1].stringValue.ModifiedValue != "Running")
             {
-                attributes[1].stringValue.SetModifier("Running");
+                attributes[1].stringValue.BaseValue = "Running";
                 animator.SetFloat("attackTimer", 1);
                 animator.SetBool("isAttacking", false);
                 animator.SetBool("isGathering", false);
@@ -335,7 +335,7 @@ public class UnitController : MonoBehaviour
                 attackTimer -= Time.deltaTime;
                 Attack();
                 if (attributes[1].stringValue.ModifiedValue != "Attacking")
-                    attributes[1].stringValue.SetModifier("Attacking");
+                    attributes[1].stringValue.BaseValue = "Attacking";
 
             }
             else
@@ -359,7 +359,7 @@ public class UnitController : MonoBehaviour
                     Gather();
                     if (attributes[1].stringValue.ModifiedValue != "Gathering")
                     {
-                        attributes[1].stringValue.SetModifier("Gathering");
+                        attributes[1].stringValue.BaseValue = "Gathering";
                         animator.SetBool("isGathering", true);
                     }
                 }
@@ -591,7 +591,7 @@ public class UnitController : MonoBehaviour
     {
         if (_attribute.type == Attributes.Status)
         {
-            //Debug.Log("Name was changed");
+            //Debug.Log(_attribute.stringValue.ModifiedValue);
         }
 
     }
