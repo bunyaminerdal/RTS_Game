@@ -2,12 +2,12 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class Interactable : MonoBehaviour
 {
     public static List<Interactable> AllInteractables { get; private set; }
-    public Action OnCollectButtonpressed { get; internal set; }
 
     public Transform InteractableTransform;
 
@@ -56,10 +56,11 @@ public class Interactable : MonoBehaviour
         }
         //attributelar içinde name ve status ayarlama
         attributes[0].stringValue.BaseValue = interactName;
-        attributes[1].stringValue.BaseValue = collectable.description;
-        attributes[2].item = item;
-        attributes[3].value.BaseValue = (int)CurrentAmount;
-        attributes[4].value.BaseValue = collectable.interactSlot;
+        attributes[1].stringValue.BaseValue = collectable.description;        
+        attributes[2].value.BaseValue = (int)CurrentAmount;
+        attributes[3].value.BaseValue = collectable.interactSlot;
+        
+        
     }
 
     void Update()
@@ -71,7 +72,7 @@ public class Interactable : MonoBehaviour
             if (respawnTime < 0)
             {
                 Debug.Log("respawned");
-                attributes[3].value.BaseValue = (int)maxAmount;
+                attributes[2].value.BaseValue = (int)maxAmount;
                 isDepleted = false;
             }
         }
@@ -85,22 +86,17 @@ public class Interactable : MonoBehaviour
     }
 
 
-    void TaskOnClick()
-    {
-        OnCollectButtonpressed?.Invoke();
-    }
-
     public float getCurrentAmount()
     {
-        return attributes[3].value.ModifiedValue;
+        return attributes[2].value.ModifiedValue;
     }
 
     public void setCurrentAmount()
     {
-        if (attributes[3].value.ModifiedValue > minAmount)
+        if (attributes[2].value.ModifiedValue > minAmount)
         {
-            attributes[3].value.BaseValue--;
-            if (attributes[3].value.ModifiedValue <= minAmount)
+            attributes[2].value.BaseValue--;
+            if (attributes[2].value.ModifiedValue <= minAmount)
             {
                 respawnTime = collectable.respawnTime;
             }
@@ -111,11 +107,11 @@ public class Interactable : MonoBehaviour
 
     public bool checkInteractSlot()
     {
-        if (attributes[4].value.BaseValue <= 0)
+        if (attributes[3].value.BaseValue <= 0)
         {
             return false;
         }
-        else if (attributes[4].value.BaseValue > 0)
+        else if (attributes[3].value.BaseValue > 0)
         {
             takeInteractSlot();
             return true;
@@ -129,18 +125,18 @@ public class Interactable : MonoBehaviour
 
     public void giveInteractSlot()
     {
-        attributes[4].value.BaseValue += 1;
+        attributes[3].value.BaseValue += 1;
     }
 
     public void takeInteractSlot()
     {
-        attributes[4].value.BaseValue -= 1;
+        attributes[3].value.BaseValue -= 1;
     }
     public void AttributeModified(InteractableAttribute _attribute)
     {
         if (_attribute.type == InteractableAttributes.Amount)
         {
-            Debug.Log(_attribute.value.ModifiedValue);
+            //Debug.Log(_attribute.value.ModifiedValue);
         }
 
     }

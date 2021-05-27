@@ -9,16 +9,15 @@ using UnityEngine.InputSystem;
 
 public abstract class UserInterface : MonoBehaviour
 {
-    private NewInputManager InputManager;
-    //public GameObject inventoryPrefab;
     protected UnitController unit;
     protected UnitInventory unitInventory;
+    protected Interactable interactable;
     protected Dictionary<GameObject, InventorySlot> slotsOnInterface = new Dictionary<GameObject, InventorySlot>();
     protected Dictionary<GameObject, Attribute> textOnInterface = new Dictionary<GameObject, Attribute>();
+    protected Dictionary<GameObject, InteractableAttribute> interactableInterface = new Dictionary<GameObject, InteractableAttribute>();
 
     void Start()
     {
-
         CreateSlots();
         gameObject.SetActive(false);
     }
@@ -28,6 +27,7 @@ public abstract class UserInterface : MonoBehaviour
     {
         slotsOnInterface.UpdateSlotDisplay();
         textOnInterface.UpdateTextDisplay();
+        interactableInterface.UpdateInteractableText();
     }
 
     public abstract void CreateSlots();
@@ -182,6 +182,33 @@ public static class ExtensionMethods
                 case Attributes.Status:
                     _Text.Key.GetComponent<TMP_Text>().text = "Status: " + _Text.Value.stringValue.ModifiedValue;
                     break;
+                default:
+                    break;
+            }
+        }
+    }
+    public static void UpdateInteractableText(this Dictionary<GameObject, InteractableAttribute> _InteractableInterface)
+    {
+        foreach (KeyValuePair<GameObject, InteractableAttribute> _Text in _InteractableInterface)
+        {
+            switch (_Text.Value.type)
+            {
+                case InteractableAttributes.Name:
+                    _Text.Key.GetComponent<TMP_Text>().text = "Name: " + _Text.Value.stringValue.ModifiedValue;
+                    break;
+                case InteractableAttributes.Description:
+                    _Text.Key.GetComponent<TMP_Text>().text = "Description: " + _Text.Value.stringValue.ModifiedValue;
+                    break;                
+                case InteractableAttributes.Amount:
+                    _Text.Key.GetComponent<TMP_Text>().text = "Amount: " + _Text.Value.value.ModifiedValue.ToString();
+                    break;
+                case InteractableAttributes.Slot:
+                    _Text.Key.GetComponent<TMP_Text>().text = "Slot: " + _Text.Value.value.ModifiedValue.ToString();
+                    break;
+                //case InteractableAttributes.Event:
+                //    if( _Text.Value.unityAction != null)
+                //        _Text.Key.GetComponent<Button>().onClick.AddListener(()=> { Debug.Log("içerde"); });
+                //    break;
                 default:
                     break;
             }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 public class PlayerManager : MonoBehaviour
@@ -8,6 +9,7 @@ public class PlayerManager : MonoBehaviour
     private Camera cameraMain;
     RaycastHit hit1;
     private List<PlayerUnitController> selectedUnits = new List<PlayerUnitController>();
+    private UnityAction onCollectClicked;
     private Interactable selectedInteractable;
     [SerializeField]
     private UserInterface displayInventory;
@@ -15,6 +17,8 @@ public class PlayerManager : MonoBehaviour
     private UserInterface displayEquipment;
     [SerializeField]
     private UserInterface displayInfo;
+    [SerializeField]
+    private UserInterface displayInteractable;
 
     private void Awake()
     {
@@ -150,22 +154,15 @@ public class PlayerManager : MonoBehaviour
 
         }
         selectedInteractable = interactable;
-        interactable.OnCollectButtonpressed += İnteractable_onCollectButtonpressed;
+        onCollectClicked += İnteractable_onCollectButtonpressed;
+        selectedInteractable.attributes[4].unityAction = onCollectClicked;
         interactable.SetInteractableSelected(true);
-        if (selectedUnits.Count == 0)
-        {
-            //interactable.OpenInteractMenu(true, false);
-        }
-        else
-        {
-            //interactable.OpenInteractMenu(true, true);
-        }
-
+        displayInteractable.UpdateInteractable(selectedInteractable);
+        
     }
 
     private void İnteractable_onCollectButtonpressed()
     {
-
         if (selectedInteractable != null)
         {
             for (int i = 0; i < selectedUnits.Count; i++)
@@ -213,9 +210,9 @@ public class PlayerManager : MonoBehaviour
     {
         if (selectedInteractable != null)
         {
-            selectedInteractable.OnCollectButtonpressed -= İnteractable_onCollectButtonpressed;
+            onCollectClicked -= İnteractable_onCollectButtonpressed;
             selectedInteractable.SetInteractableSelected(false);
-            //selectedInteractable.OpenInteractMenu(false, false);
+            displayInteractable.CloseScreen();
             selectedInteractable = null;
         }
 

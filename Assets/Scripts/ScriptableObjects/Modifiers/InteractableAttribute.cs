@@ -1,5 +1,7 @@
 
 
+using UnityEngine.Events;
+
 [System.Serializable]
 public class InteractableAttribute
 {
@@ -8,14 +10,14 @@ public class InteractableAttribute
     public InteractableAttributes type;
     public ModifiableInt value;
     public ModifiableString stringValue;
-    public Item item;
+    public UnityAction unityAction;
 
     public void SetParent(Interactable _parent)
     {
         parent = _parent;
         value = new ModifiableInt(AttributeModified);
         stringValue = new ModifiableString(AttributeModified);
-        item = null;
+        unityAction = null;
     }
     public void AttributeModified()
     {
@@ -25,8 +27,8 @@ public class InteractableAttribute
 public enum InteractableAttributes
 {    
     Name,
-    Description,
-    Item,
+    Description,    
     Amount,
-    Slot
+    Slot,
+    Event
 }
