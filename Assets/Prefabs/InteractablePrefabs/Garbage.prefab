@@ -104,6 +104,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -128,6 +129,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!135 &1143399716411113451
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -171,12 +173,60 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InteractableTransform: {fileID: 1143399715822454937}
   radius: 2
-  interactMenu: {fileID: 4902337811752639011, guid: 3897134dae922d4499f7ea21bde53965,
-    type: 3}
+  attributes:
+  - type: 0
+    value:
+      baseValue: 0
+      modifiedValue: 0
+    stringValue:
+      baseValue: 
+      modifiedValue: 
+    collectable: {fileID: 0}
+  - type: 1
+    value:
+      baseValue: 0
+      modifiedValue: 0
+    stringValue:
+      baseValue: 
+      modifiedValue: 
+    collectable: {fileID: 0}
+  - type: 2
+    value:
+      baseValue: 0
+      modifiedValue: 0
+    stringValue:
+      baseValue: 
+      modifiedValue: 
+    collectable: {fileID: 0}
+  - type: 3
+    value:
+      baseValue: 0
+      modifiedValue: 0
+    stringValue:
+      baseValue: 
+      modifiedValue: 
+    collectable: {fileID: 0}
+  - type: 4
+    value:
+      baseValue: 0
+      modifiedValue: 0
+    stringValue:
+      baseValue: 
+      modifiedValue: 
+    collectable: {fileID: 0}
+  interactMenu: {fileID: 4902337811752639011, guid: 3897134dae922d4499f7ea21bde53965, type: 3}
   collectable: {fileID: 11400000, guid: 57532413c43be4e4ea4b181e354a17a9, type: 2}
   CurrentAmount: 0
   respawnTime: 0
-  item: {fileID: 0}
+  item:
+    slotId: 0
+    itemId: 
+    itemName: 
+    itemtype: 
+    uiDisplay: {fileID: 0}
+    unitDisplay: {fileID: 0}
+    isStackable: 0
+    buffs: []
   interactName: 
   interactType: 
 --- !u!1 &1143399716486757296
@@ -234,6 +284,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -258,3 +309,4 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}

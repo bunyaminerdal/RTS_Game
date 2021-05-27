@@ -12,6 +12,7 @@ public class Interactable : MonoBehaviour
     public Transform InteractableTransform;
 
     public float radius = 3f;
+    public InteractableAttribute[] attributes;
 
     //bool isFocus = false;
     public GameObject interactMenu;
@@ -20,21 +21,14 @@ public class Interactable : MonoBehaviour
     protected Button yourButton;
 
     public CollectableObject collectable;
-    private Text[] collectableTexts;
     private float maxAmount;
     private float minAmount;
     public float CurrentAmount;
     private bool isDepleted;
     public float respawnTime;
-    private bool isUnitSelected;
-    private int interactSlot;
-    private int maxInteractSlot;
-    public Item item;
-    private Canvas interactCanvas;
-
+    public Item item; 
     public string interactName;
     public string interactType;
-    private Camera mainCamera;
 
     //Düğme basıldığında trigerlanacak
 
@@ -51,19 +45,21 @@ public class Interactable : MonoBehaviour
     }
     void Start()
     {
-        mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        interactCanvas = GameObject.Find("CanvasInteractable").GetComponent<Canvas>();
-        Menu = Instantiate(interactMenu, Vector3.zero, Quaternion.identity, interactCanvas.transform);
-        Menu.name = interactName + "_Menu";
-        Menu.SetActive(false);
         maxAmount = collectable.maxAmount;
-        minAmount = collectable.minAmount;
-        interactSlot = collectable.interactSlot;
-        maxInteractSlot = collectable.interactSlot;
+        minAmount = 0;
         item = new Item(collectable.item);
-        collectableTexts = Menu.GetComponentsInChildren<Text>();
-        yourButton = Menu.GetComponentInChildren<Button>();
-        yourButton.onClick.AddListener(TaskOnClick);
+        //yourButton = Menu.GetComponentInChildren<Button>();
+        //yourButton.onClick.AddListener(TaskOnClick);
+        for (int i = 0; i < attributes.Length; i++)
+        {
+            attributes[i].SetParent(this);
+        }
+        //attributelar içinde name ve status ayarlama
+        attributes[0].stringValue.BaseValue = interactName;
+        attributes[1].stringValue.BaseValue = collectable.description;
+        attributes[2].item = item;
+        attributes[3].value.BaseValue = (int)CurrentAmount;
+        attributes[4].value.BaseValue = collectable.interactSlot;
     }
 
     void Update()
@@ -75,49 +71,11 @@ public class Interactable : MonoBehaviour
             if (respawnTime < 0)
             {
                 Debug.Log("respawned");
-                CurrentAmount = maxAmount;
+                attributes[3].value.BaseValue = (int)maxAmount;
                 isDepleted = false;
             }
         }
-        createMenu();
 
-    }
-
-    private void createMenu()
-    {
-        if (Menu.activeSelf)
-        {
-            Menu.transform.position = mainCamera.WorldToScreenPoint(transform.position);
-
-            foreach (var child in collectableTexts)
-            {
-                if (child.name == "Amount")
-                {
-                    child.text = "Amount: " + CurrentAmount.ToString() + " / " + maxAmount.ToString();
-                }
-                else if (child.name == "Slot")
-                {
-                    child.text = "Slot: " + interactSlot.ToString() + " / " + maxInteractSlot.ToString();
-                }
-            }
-            if (!isDepleted)
-            {
-                if (isUnitSelected)
-                {
-                    if (interactSlot > 0)
-                    {
-                        yourButton.interactable = true;
-                    }
-                    else
-                    {
-                        yourButton.interactable = false;
-                    }
-
-                }
-
-            }
-
-        }
     }
 
     public void SetInteractableSelected(bool isSelected)
@@ -125,55 +83,6 @@ public class Interactable : MonoBehaviour
         transform.Find("InteractHighlight").gameObject.SetActive(isSelected);
 
     }
-
-    public void OpenInteractMenu(bool isSelected, bool _isUnitSelected)
-    {
-
-        if (!isSelected)
-        {
-
-            Menu.SetActive(false);
-            return;
-        }
-        isUnitSelected = _isUnitSelected;
-
-        Menu.SetActive(true);
-        foreach (var child in collectableTexts)
-        {
-            if (child.name == "Title")
-            {
-                child.text = collectable.collectablename;
-            }
-            else if (child.name == "Description")
-            {
-                child.text = collectable.description;
-
-            }
-
-        }
-
-
-        if (!isDepleted)
-        {
-            if (isUnitSelected)
-            {
-                yourButton.interactable = true;
-            }
-            else
-            {
-                yourButton.interactable = false;
-            }
-
-        }
-        else
-        {
-            yourButton.interactable = false;
-        }
-
-
-
-    }
-
 
 
     void TaskOnClick()
@@ -183,15 +92,15 @@ public class Interactable : MonoBehaviour
 
     public float getCurrentAmount()
     {
-        return CurrentAmount;
+        return attributes[3].value.ModifiedValue;
     }
 
     public void setCurrentAmount()
     {
-        if (CurrentAmount > minAmount)
+        if (attributes[3].value.ModifiedValue > minAmount)
         {
-            CurrentAmount--;
-            if (CurrentAmount == minAmount)
+            attributes[3].value.BaseValue--;
+            if (attributes[3].value.ModifiedValue <= minAmount)
             {
                 respawnTime = collectable.respawnTime;
             }
@@ -200,15 +109,15 @@ public class Interactable : MonoBehaviour
     }
 
 
-    public bool takeInteractSlot()
+    public bool checkInteractSlot()
     {
-        if (interactSlot == 0)
+        if (attributes[4].value.BaseValue <= 0)
         {
             return false;
         }
-        else if (interactSlot > 0)
+        else if (attributes[4].value.BaseValue > 0)
         {
-            takedInteractSlot();
+            takeInteractSlot();
             return true;
         }
         else
@@ -220,12 +129,19 @@ public class Interactable : MonoBehaviour
 
     public void giveInteractSlot()
     {
-        interactSlot += 1;
+        attributes[4].value.BaseValue += 1;
     }
 
-    public void takedInteractSlot()
+    public void takeInteractSlot()
     {
-        interactSlot -= 1;
+        attributes[4].value.BaseValue -= 1;
     }
+    public void AttributeModified(InteractableAttribute _attribute)
+    {
+        if (_attribute.type == InteractableAttributes.Amount)
+        {
+            Debug.Log(_attribute.value.ModifiedValue);
+        }
 
+    }
 }

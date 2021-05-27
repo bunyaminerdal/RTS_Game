@@ -154,11 +154,11 @@ public class PlayerManager : MonoBehaviour
         interactable.SetInteractableSelected(true);
         if (selectedUnits.Count == 0)
         {
-            interactable.OpenInteractMenu(true, false);
+            //interactable.OpenInteractMenu(true, false);
         }
         else
         {
-            interactable.OpenInteractMenu(true, true);
+            //interactable.OpenInteractMenu(true, true);
         }
 
     }
@@ -175,7 +175,7 @@ public class PlayerManager : MonoBehaviour
                 {
                     if (selectedUnits[i].getUnitInventory().calculateFull(selectedInteractable.item) == false)
                     {
-                        if (selectedInteractable.takeInteractSlot())
+                        if (selectedInteractable.checkInteractSlot())
                         {
                             selectedUnits[i].SetFocus(selectedInteractable.gameObject.transform);
                             selectedUnits[i].startGather(selectedInteractable);
@@ -215,7 +215,7 @@ public class PlayerManager : MonoBehaviour
         {
             selectedInteractable.OnCollectButtonpressed -= İnteractable_onCollectButtonpressed;
             selectedInteractable.SetInteractableSelected(false);
-            selectedInteractable.OpenInteractMenu(false, false);
+            //selectedInteractable.OpenInteractMenu(false, false);
             selectedInteractable = null;
         }
 
@@ -256,7 +256,7 @@ public class PlayerManager : MonoBehaviour
 
                 if (selectedUnits[i].getUnitInventory().calculateFull(interactable.item) == false)
                 {
-                    if (interactable.takeInteractSlot())
+                    if (interactable.checkInteractSlot())
                     {
                         selectedUnits[i].SetFocus(interactable.gameObject.transform);
                         selectedUnits[i].startGather(interactable);

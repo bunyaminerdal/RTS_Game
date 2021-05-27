@@ -1,26 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+
 
 [System.Serializable]
-public class Attribute
+public class InteractableAttribute
 {
     [System.NonSerialized]
-    public UnitController parent;
-    public Attributes type;
+    public Interactable parent;
+    public InteractableAttributes type;
     public ModifiableInt value;
     public ModifiableString stringValue;
+    public Item item;
 
-    public void SetParent(UnitController _parent)
+    public void SetParent(Interactable _parent)
     {
         parent = _parent;
         value = new ModifiableInt(AttributeModified);
         stringValue = new ModifiableString(AttributeModified);
+        item = null;
     }
     public void AttributeModified()
     {
         parent.AttributeModified(this);
     }
 }
-
-
+public enum InteractableAttributes
+{    
+    Name,
+    Description,
+    Item,
+    Amount,
+    Slot
+}

@@ -188,7 +188,7 @@ public class SaveManager : MonoBehaviour
             realInteractobject.transform.eulerAngles.x,
             realInteractobject.transform.eulerAngles.y,
             realInteractobject.transform.eulerAngles.z,
-            interacts[i].CurrentAmount,
+            interacts[i].attributes[3].value.ModifiedValue,
             interacts[i].respawnTime
             ));
         }

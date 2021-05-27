@@ -84,7 +84,7 @@ public class UnitController : MonoBehaviour
         if (unitInteract != null)
         {
             SetFocus(unitInteract.transform);
-            unitInteract.takedInteractSlot();
+            unitInteract.takeInteractSlot();
             startGather(unitInteract);
         }
 
