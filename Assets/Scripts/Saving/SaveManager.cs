@@ -323,7 +323,7 @@ public class SaveManager : MonoBehaviour
     private void LoadUnit(SaveData data)
     {
         PlayerEventHandler.DeSelectUnits?.Invoke();
-        InteractableMenuEventHandler.ClearInteractMenus?.Invoke();
+        PlayerEventHandler.DeSelectInteractable?.Invoke();
 
         SaveLoadHandlers.ClearClickMarkers?.Invoke();
 

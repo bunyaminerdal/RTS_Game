@@ -27,11 +27,13 @@ public class PlayerManager : MonoBehaviour
     private void OnEnable()
     {
         PlayerEventHandler.DeSelectUnits.AddListener(DeselectUnits);
+        PlayerEventHandler.DeSelectInteractable.AddListener(DeselectInteractable);
         UnitFrameEventHandler.UnitFrameClicked.AddListener(UnitFrameClicked);
     }
     private void OnDisable()
     {
         UnitFrameEventHandler.UnitFrameClicked.RemoveListener(UnitFrameClicked);
+        PlayerEventHandler.DeSelectInteractable.RemoveListener(DeselectInteractable);
         PlayerEventHandler.DeSelectUnits.RemoveListener(DeselectUnits);
     }
 
@@ -183,8 +185,6 @@ public class PlayerManager : MonoBehaviour
 
                 }
             }
-            //bunuda kaldırmak lazım
-            DeselectInteractable();
         }
 
     }

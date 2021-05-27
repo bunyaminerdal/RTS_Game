@@ -24,7 +24,6 @@ public class Interactable : MonoBehaviour
     private float maxAmount;
     private float minAmount;
     public float CurrentAmount;
-    private bool isDepleted;
     public float respawnTime;
     public Item item; 
     public string interactName;
@@ -59,24 +58,24 @@ public class Interactable : MonoBehaviour
         attributes[1].stringValue.BaseValue = collectable.description;        
         attributes[2].value.BaseValue = (int)CurrentAmount;
         attributes[3].value.BaseValue = collectable.interactSlot;
-        
-        
+        attributes[4].unityAction = null;
+        attributes[4].value.BaseValue = collectable.interactSlot;
+
     }
 
     void Update()
     {
         if (respawnTime > 0)
         {
-            isDepleted = true;
+            attributes[4].isDepleted = true;
             respawnTime -= Time.deltaTime;
             if (respawnTime < 0)
             {
                 Debug.Log("respawned");
                 attributes[2].value.BaseValue = (int)maxAmount;
-                isDepleted = false;
+                attributes[4].isDepleted = false;
             }
         }
-
     }
 
     public void SetInteractableSelected(bool isSelected)
@@ -126,11 +125,13 @@ public class Interactable : MonoBehaviour
     public void giveInteractSlot()
     {
         attributes[3].value.BaseValue += 1;
+        attributes[4].value.BaseValue += 1;
     }
 
     public void takeInteractSlot()
     {
         attributes[3].value.BaseValue -= 1;
+        attributes[4].value.BaseValue -= 1;
     }
     public void AttributeModified(InteractableAttribute _attribute)
     {

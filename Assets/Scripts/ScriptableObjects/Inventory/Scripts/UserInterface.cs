@@ -205,10 +205,12 @@ public static class ExtensionMethods
                 case InteractableAttributes.Slot:
                     _Text.Key.GetComponent<TMP_Text>().text = "Slot: " + _Text.Value.value.ModifiedValue.ToString();
                     break;
-                //case InteractableAttributes.Event:
-                //    if( _Text.Value.unityAction != null)
-                //        _Text.Key.GetComponent<Button>().onClick.AddListener(()=> { Debug.Log("içerde"); });
-                //    break;
+                case InteractableAttributes.Event:
+                    if (_Text.Value.value.ModifiedValue > 0)                        
+                        _Text.Key.GetComponent<Button>().interactable = !_Text.Value.isDepleted;
+                    else
+                        _Text.Key.GetComponent<Button>().interactable = false;
+                    break;
                 default:
                     break;
             }

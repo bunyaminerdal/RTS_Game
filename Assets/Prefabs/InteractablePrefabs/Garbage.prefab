@@ -181,7 +181,7 @@ MonoBehaviour:
     stringValue:
       baseValue: 
       modifiedValue: 
-    collectable: {fileID: 0}
+    isDepleted: 0
   - type: 1
     value:
       baseValue: 0
@@ -189,7 +189,7 @@ MonoBehaviour:
     stringValue:
       baseValue: 
       modifiedValue: 
-    collectable: {fileID: 0}
+    isDepleted: 0
   - type: 2
     value:
       baseValue: 0
@@ -197,7 +197,7 @@ MonoBehaviour:
     stringValue:
       baseValue: 
       modifiedValue: 
-    collectable: {fileID: 0}
+    isDepleted: 0
   - type: 3
     value:
       baseValue: 0
@@ -205,7 +205,7 @@ MonoBehaviour:
     stringValue:
       baseValue: 
       modifiedValue: 
-    collectable: {fileID: 0}
+    isDepleted: 0
   - type: 4
     value:
       baseValue: 0
@@ -213,7 +213,7 @@ MonoBehaviour:
     stringValue:
       baseValue: 
       modifiedValue: 
-    collectable: {fileID: 0}
+    isDepleted: 0
   interactMenu: {fileID: 4902337811752639011, guid: 3897134dae922d4499f7ea21bde53965, type: 3}
   collectable: {fileID: 11400000, guid: 57532413c43be4e4ea4b181e354a17a9, type: 2}
   CurrentAmount: 0

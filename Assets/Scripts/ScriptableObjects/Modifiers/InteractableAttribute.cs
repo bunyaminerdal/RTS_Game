@@ -11,6 +11,7 @@ public class InteractableAttribute
     public ModifiableInt value;
     public ModifiableString stringValue;
     public UnityAction unityAction;
+    public bool isDepleted;
 
     public void SetParent(Interactable _parent)
     {

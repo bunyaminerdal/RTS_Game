@@ -24,11 +24,12 @@ public class InteractableScreen : UserInterface
         for (int i = 0; i < transform.childCount; i++)
         {
             interactableInterface.Add(transform.GetChild(i).gameObject, interactable.attributes[i]);
-            if(transform.GetChild(i).TryGetComponent<Button>(out Button button))
+            if (transform.GetChild(i).TryGetComponent<Button>(out Button button))
             {
                 if (interactable.attributes[i].unityAction != null)
-                    button.onClick.AddListener(interactable.attributes[i].unityAction);                
-            }
+                    button.onClick.AddListener(interactable.attributes[i].unityAction);
+            }                       
+            
         }
     }
 
