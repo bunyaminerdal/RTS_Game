@@ -43,7 +43,7 @@ public class InteractCommand : Command
                     playerManager.MoveAction(hit.point);
                 }
                 //Debug.Log(ground);
-                if (hit.transform.TryGetComponent<groundItem>(out groundItem groundItem))
+                if (hit.transform.TryGetComponent<GroundItem>(out GroundItem groundItem))
                 {
                     playerManager.selectedGroundItem(groundItem);
                 }

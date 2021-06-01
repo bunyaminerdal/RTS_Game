@@ -230,7 +230,7 @@ public class PlayerManager : MonoBehaviour
         }
 
     }
-    public void selectedGroundItem(groundItem groundItem)
+    public void selectedGroundItem(GroundItem groundItem)
     {
         if (selectedUnits.Count <= 0) return;
         if (selectedUnits[0].getUnitInventory().calculateFull(groundItem.item) == false)

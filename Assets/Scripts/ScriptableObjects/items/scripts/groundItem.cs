@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 
-public class groundItem : MonoBehaviour , ISerializationCallbackReceiver
+public class GroundItem : MonoBehaviour , ISerializationCallbackReceiver
 {
     public ItemObject itemObj;
     public  Item item;

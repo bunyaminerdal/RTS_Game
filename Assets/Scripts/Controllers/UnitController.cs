@@ -14,7 +14,7 @@ public class UnitController : MonoBehaviour
     public NavMeshAgent navAgent;
     private Transform currentTarget;
     private Transform currentFocus;
-    private Transform currentTargetItem;
+    public Transform currentTargetItem = null;
     private float attackTimer;
     private float gatherTimer;
     Animator animator;
@@ -27,9 +27,10 @@ public class UnitController : MonoBehaviour
     public UnitStats unitStats;
     private bool isGathering;
 
-
-    public GameObject clickMarker;
+    [SerializeField]
+    private GameObject clickMarker;
     public Interactable interact;
+    
     public Transform clickMarkerTransform;
     [SerializeField]
     private GameObject selectionMarker;
@@ -46,7 +47,6 @@ public class UnitController : MonoBehaviour
     public float CurrentHealth { get => currentHealth; set => currentHealth = value; }
 
     public GameObject healthBarPrefab;
-    private GameObject healthBar;
     private bool isDead;
     //TODO: Şuan elle prefab içine girdim ama otomatik yapsam daha güzel olur
     public Attribute[] attributes;
@@ -57,21 +57,55 @@ public class UnitController : MonoBehaviour
     public Texture2D unitTexture;
     private Rect rect;
 
-    private void Start()
+    //state
+    private StateMachine stateMachine;
+
+    private void Awake()
     {
         unitBoxController = FindObjectOfType<UnitBoxController>();
         unitCam = GetComponentInChildren<Camera>();
-        rect = new Rect(0, 0, 100, 100);
-        unitRenderTexture = new RenderTexture(copyRenderTexture);
-        unitTexture = new Texture2D(100, 100, TextureFormat.RGBAFloat, false);
-        StartCoroutine(UnitTextureRender());
 
-        healthBar = Instantiate(healthBarPrefab, transform);
+        Instantiate(healthBarPrefab, transform);
 
         navAgent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
         //clickMarker
         myLineRenderer = GetComponent<LineRenderer>();
+
+        //state
+        stateMachine = new StateMachine();
+        var idleState = new IdleState(this, navAgent, animator);
+        var moveToDestionationState = new MoveToDestinationState(this, navAgent, animator,myLineRenderer,clickMarkerTransform,clickMarker);
+        var takeGroundItem = new TakeGroundItemState(this, animator);
+
+        //if condition is true will enter this state ,whatever unit in which state
+        stateMachine.AddAnyTransition(moveToDestionationState, () => Vector3.Distance(transform.position, unitDestination) > 1f);
+        
+        //change state with condition
+        At(moveToDestionationState, idleState,  MoveToIdle());
+        At(idleState, takeGroundItem, IdleToTakeGroundItem());
+        At(takeGroundItem, idleState, TakeGroundItemToIdle());
+
+
+        //start state 
+        stateMachine.SetState(idleState);
+
+        void At(IState from, IState to, Func<bool> condition) => stateMachine.AddTransition(from, to, condition);
+
+        Func<bool> IdleToTakeGroundItem() => () => currentTargetItem != null && Vector3.Distance(transform.position, unitDestination) <= 1f;
+        Func<bool> TakeGroundItemToIdle() => () => currentTargetItem == null;
+        Func<bool> MoveToIdle() => () => Vector3.Distance(transform.position, unitDestination) <= 1f;
+    }
+
+    private void Start()
+    {
+        
+        rect = new Rect(0, 0, 100, 100);
+        unitRenderTexture = new RenderTexture(copyRenderTexture);
+        unitTexture = new Texture2D(100, 100, TextureFormat.RGBAFloat, false);
+        StartCoroutine(UnitTextureRender());
+
+        //clickmarker
         myLineRenderer.startWidth = 0.1f;
         myLineRenderer.endWidth = 0.1f;
         myLineRenderer.positionCount = 0;
@@ -251,7 +285,8 @@ public class UnitController : MonoBehaviour
 
     }
 
-    private void Update()
+    private void Update() => stateMachine.Tick();
+    private void Update1()
     {
         if (isDead)
         {
@@ -286,7 +321,7 @@ public class UnitController : MonoBehaviour
         {
             if (isUnitSelected)
             {
-                DrawPath();
+                //DrawPath();
             }
             else
             {
@@ -379,7 +414,7 @@ public class UnitController : MonoBehaviour
 
             if (distance <= 2f)
             {
-                var item = currentTargetItem.GetComponent<groundItem>();
+                var item = currentTargetItem.GetComponent<GroundItem>();
                 unitInventory.AddItem(item.item, 1);
                 Destroy(item.gameObject);
             }
@@ -393,8 +428,9 @@ public class UnitController : MonoBehaviour
         currentFocus = null;
         currentTargetItem = null;
         navAgent.stoppingDistance = 1f;
-        navAgent.destination = dest;
-        navAgent.updateRotation = true;
+        //navAgent.destination = dest;
+        //navAgent.updateRotation = true;
+        unitDestination = dest;
     }
 
     public void SetSelected(bool isSelected)
@@ -520,48 +556,24 @@ public class UnitController : MonoBehaviour
         return isGathering;
     }
 
-    //clickMarker
-    void DrawPath()
-    {
-        myLineRenderer.positionCount = navAgent.path.corners.Length;
-        myLineRenderer.SetPosition(0, transform.position);
-        if (navAgent.path.corners.Length < 2)
-        {
-            return;
-        }
-        Vector3 pointPos = Vector3.zero;
-        for (int i = 0; i < navAgent.path.corners.Length; i++)
-        {
-            pointPos = new Vector3(navAgent.path.corners[i].x, navAgent.path.corners[i].y, navAgent.path.corners[i].z);
-            myLineRenderer.SetPosition(i, pointPos);
-        }
-        clickMarker.transform.position = pointPos;
-        if (!clickMarker.activeSelf)
-        {
-            //click marker
-            clickMarker.transform.SetParent(clickMarkerTransform);
-            clickMarker.SetActive(true);
+   
 
-        }
-
-    }
 
     public void GetItem(Transform item)
     {
-        currentTarget = null;
+        //currentTarget = null;
         currentTargetItem = item;
-        currentFocus = null;
-        navAgent.stoppingDistance = 2f;
-        navAgent.updateRotation = true;
+        unitDestination = item.position;
+        //currentFocus = null;
+        //navAgent.stoppingDistance = 2f;
+        //navAgent.updateRotation = true;
     }
 
     public void addItemToInventory(Item item)
     {
-        if (isGathering)
-        {
-            unitInventory.AddItem(item, 1);
-        }
-
+        
+        unitInventory.AddItem(item, 1);
+        
     }
 
     public UnitInventory getUnitInventory()
@@ -596,6 +608,10 @@ public class UnitController : MonoBehaviour
 
     }
 
-
+    public void DestroyGameObject(GameObject gameObject)
+    {
+        if (!gameObject) return;
+        Destroy(gameObject);
+    }
 }
 
