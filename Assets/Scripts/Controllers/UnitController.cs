@@ -10,10 +10,11 @@ public class UnitController : MonoBehaviour
     private SkinnedMeshRenderer newMeshHelmet;
     private SkinnedMeshRenderer newMeshChest;
     private SkinnedMeshRenderer newMeshWeapon;
-    public SkinnedMeshRenderer TargetMesh;
+    [SerializeField]
+    private SkinnedMeshRenderer TargetMesh;
     public NavMeshAgent navAgent;
     private Transform currentTarget;
-    private Transform currentFocus;
+    public Transform currentGatherResource = null;
     public Transform currentTargetItem = null;
     private float attackTimer;
     private float gatherTimer;
@@ -45,6 +46,8 @@ public class UnitController : MonoBehaviour
 
     private float currentHealth;
     public float CurrentHealth { get => currentHealth; set => currentHealth = value; }
+    public float GatherTimer { get => gatherTimer; set => gatherTimer = value; }
+    public SkinnedMeshRenderer NewMeshWeapon { get => newMeshWeapon; set => newMeshWeapon = value; }
 
     public GameObject healthBarPrefab;
     private bool isDead;
@@ -59,6 +62,9 @@ public class UnitController : MonoBehaviour
 
     //state
     private StateMachine stateMachine;
+    private MoveToDestinationState moveToDestinationState;
+    private TakeGroundItemState takeGroundItemState;
+    private GatherState gatherState;
 
     private void Awake()
     {
@@ -75,26 +81,27 @@ public class UnitController : MonoBehaviour
         //state
         stateMachine = new StateMachine();
         var idleState = new IdleState(this, navAgent, animator);
-        var moveToDestionationState = new MoveToDestinationState(this, navAgent, animator,myLineRenderer,clickMarkerTransform,clickMarker);
-        var takeGroundItem = new TakeGroundItemState(this, animator);
+        moveToDestinationState = new MoveToDestinationState(this, navAgent, animator,myLineRenderer,clickMarkerTransform,clickMarker);
+        takeGroundItemState = new TakeGroundItemState(this, navAgent, animator);
+        gatherState = new GatherState(this,navAgent,animator);
 
         //if condition is true will enter this state ,whatever unit in which state
-        stateMachine.AddAnyTransition(moveToDestionationState, () => Vector3.Distance(transform.position, unitDestination) > 1f);
+        //stateMachine.AddAnyTransition(moveToDestionationState, () => Vector3.Distance(transform.position, unitDestination) > 1f);
         
         //change state with condition
-        At(moveToDestionationState, idleState,  MoveToIdle());
-        At(idleState, takeGroundItem, IdleToTakeGroundItem());
-        At(takeGroundItem, idleState, TakeGroundItemToIdle());
-
+        At(moveToDestinationState, idleState,  MoveToIdle());
+        At(takeGroundItemState, idleState, TakeGroundItemToIdle());
+        At(gatherState, idleState, GatherToIdle());
 
         //start state 
         stateMachine.SetState(idleState);
 
         void At(IState from, IState to, Func<bool> condition) => stateMachine.AddTransition(from, to, condition);
 
-        Func<bool> IdleToTakeGroundItem() => () => currentTargetItem != null && Vector3.Distance(transform.position, unitDestination) <= 1f;
+        //conditions
         Func<bool> TakeGroundItemToIdle() => () => currentTargetItem == null;
         Func<bool> MoveToIdle() => () => Vector3.Distance(transform.position, unitDestination) <= 1f;
+        Func<bool> GatherToIdle() => () => currentGatherResource == null;
     }
 
     private void Start()
@@ -104,6 +111,8 @@ public class UnitController : MonoBehaviour
         unitRenderTexture = new RenderTexture(copyRenderTexture);
         unitTexture = new Texture2D(100, 100, TextureFormat.RGBAFloat, false);
         StartCoroutine(UnitTextureRender());
+
+        navAgent.stoppingDistance = 1f;
 
         //clickmarker
         myLineRenderer.startWidth = 0.1f;
@@ -117,9 +126,7 @@ public class UnitController : MonoBehaviour
 
         if (unitInteract != null)
         {
-            SetFocus(unitInteract.transform);
-            unitInteract.takeInteractSlot();
-            startGather(unitInteract);
+            SetGatherResource(unitInteract.transform);
         }
 
         for (int i = 0; i < unitEqInventory.Container.Slots.Length; i++)
@@ -169,7 +176,7 @@ public class UnitController : MonoBehaviour
             SetEqInventory(unitEqInventoryStart);
             unitEqInventoryStart = null;
         }
-        gatherTimer = unitStats.gatheringSpeed;
+        GatherTimer = unitStats.gatheringSpeed;
     }
     public void OnBeforeSlotUpdate(InventorySlot _slot)
     {
@@ -205,9 +212,9 @@ public class UnitController : MonoBehaviour
                     }
                     break;
                 case ItemType.Weapon:
-                    if (newMeshWeapon.gameObject != null)
+                    if (NewMeshWeapon.gameObject != null)
                     {
-                        Destroy(newMeshWeapon.gameObject);
+                        Destroy(NewMeshWeapon.gameObject);
 
                     }
                     break;
@@ -253,10 +260,10 @@ public class UnitController : MonoBehaviour
                     newMeshChest.rootBone = TargetMesh.bones[2];
                     break;
                 case ItemType.Weapon:
-                    newMeshWeapon = Instantiate<SkinnedMeshRenderer>(_slot.item.unitDisplay);
-                    newMeshWeapon.transform.parent = TargetMesh.transform;
-                    newMeshWeapon.bones = TargetMesh.bones;
-                    newMeshWeapon.rootBone = TargetMesh.bones[14];
+                    NewMeshWeapon = Instantiate<SkinnedMeshRenderer>(_slot.item.unitDisplay);
+                    NewMeshWeapon.transform.parent = TargetMesh.transform;
+                    NewMeshWeapon.bones = TargetMesh.bones;
+                    NewMeshWeapon.rootBone = TargetMesh.bones[14];
 
                     break;
 
@@ -378,19 +385,19 @@ public class UnitController : MonoBehaviour
                 navAgent.destination = currentTarget.position;
             }
         }
-        if (currentFocus != null)
+        if (currentGatherResource != null)
         {
-            if (navAgent.destination != currentFocus.Find("InteractionPoint").gameObject.transform.position)
+            if (navAgent.destination != currentGatherResource.Find("InteractionPoint").gameObject.transform.position)
             {
-                navAgent.destination = currentFocus.Find("InteractionPoint").gameObject.transform.position;
-                distance = (transform.position - currentFocus.Find("InteractionPoint").gameObject.transform.position).magnitude;
+                navAgent.destination = currentGatherResource.Find("InteractionPoint").gameObject.transform.position;
+                distance = (transform.position - currentGatherResource.Find("InteractionPoint").gameObject.transform.position).magnitude;
             }
-            FaceTarget(currentFocus);
+            FaceTarget(currentGatherResource);
             if (distance <= 2f)
             {
                 if (isGathering)
                 {
-                    gatherTimer -= Time.deltaTime;
+                    GatherTimer -= Time.deltaTime;
                     Gather();
                     if (attributes[1].stringValue.ModifiedValue != "Gathering")
                     {
@@ -424,20 +431,13 @@ public class UnitController : MonoBehaviour
 
     public void MoveUnit(Vector3 dest)
     {
-        currentTarget = null;
-        currentFocus = null;
-        currentTargetItem = null;
-        navAgent.stoppingDistance = 1f;
-        //navAgent.destination = dest;
-        //navAgent.updateRotation = true;
         unitDestination = dest;
+        stateMachine.SetState(moveToDestinationState);
     }
 
     public void SetSelected(bool isSelected)
     {
-
         selectionMarker.SetActive(isSelected);
-
         isUnitSelected = isSelected;
         unitBoxController.onUnitSelected(GetComponent<PlayerUnitController>(), isSelected);
     }
@@ -450,21 +450,17 @@ public class UnitController : MonoBehaviour
     public void SetNewTarget(Transform enemy)
     {
         currentTarget = enemy;
-        currentFocus = null;
+        currentGatherResource = null;
         currentTargetItem = null;
-        navAgent.stoppingDistance = 2f;
         navAgent.updateRotation = false;
         attackTimer = attributes[4].value.ModifiedValue;
     }
 
-    public void SetFocus(Transform newFocus)
+    public void SetGatherResource(Transform newGatherResource)
     {
-        currentTarget = null;
-        currentTargetItem = null;
-        currentFocus = newFocus;
-        navAgent.stoppingDistance = 1.8f;
-        navAgent.updateRotation = false; //true olursa gelince kafasını çeviriyor, false olursa gelirken dönüyor
-        gatherTimer = unitStats.gatheringSpeed;
+        currentGatherResource = newGatherResource;
+        GatherTimer = unitStats.gatheringSpeed;
+        stateMachine.SetState(gatherState);
     }
 
     public void Attack()
@@ -477,25 +473,25 @@ public class UnitController : MonoBehaviour
         }
     }
 
-    public void Gather()
+    private void Gather()
     {
-        if (currentFocus.GetComponent<Interactable>().getCurrentAmount() <= 0)
-        {
-            stopGather();
-        }
-        else
-        {
-            if (newMeshWeapon != null)
-            {
-                newMeshWeapon.gameObject.SetActive(false);
+        //if (currentGatherResource.GetComponent<Interactable>().getCurrentAmount() <= 0)
+        //{
+        //    stopGather();
+        //}
+        //else
+        //{
+        //    if (newMeshWeapon != null)
+        //    {
+        //        newMeshWeapon.gameObject.SetActive(false);
 
-            }
-            if (gatherTimer <= 0)
-            {
-                RTSGameManager.UnitGather(this, currentFocus.GetComponent<Interactable>());
-                gatherTimer = unitStats.gatheringSpeed;
-            }
-        }
+        //    }
+        //    if (GatherTimer <= 0)
+        //    {
+        //        RTSGameManager.UnitGather(this, currentGatherResource.GetComponent<Interactable>());
+        //        GatherTimer = unitStats.gatheringSpeed;
+        //    }
+        //}
 
     }
 
@@ -527,53 +523,15 @@ public class UnitController : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
     }
 
-    public void stopGather()
-    {
-        interact.giveInteractSlot();
-        interact = null;
-        isGathering = false;
-        if (newMeshWeapon != null)
-        {
-            newMeshWeapon.gameObject.SetActive(true);
-
-        }
-    }
-    public void startGather(Interactable _interact)
-    {
-        if (interact != null)
-        {
-            interact.giveInteractSlot();
-            interact = null;
-        }
-        interact = _interact;
-        isGathering = true;
-
-
-    }
-
-    public bool IsGathering()
-    {
-        return isGathering;
-    }
-
-   
-
-
     public void GetItem(Transform item)
     {
-        //currentTarget = null;
         currentTargetItem = item;
-        unitDestination = item.position;
-        //currentFocus = null;
-        //navAgent.stoppingDistance = 2f;
-        //navAgent.updateRotation = true;
+        stateMachine.SetState(takeGroundItemState);
     }
 
     public void addItemToInventory(Item item)
-    {
-        
-        unitInventory.AddItem(item, 1);
-        
+    {        
+        unitInventory.AddItem(item, 1);        
     }
 
     public UnitInventory getUnitInventory()

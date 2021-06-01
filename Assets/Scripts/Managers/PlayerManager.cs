@@ -176,8 +176,7 @@ public class PlayerManager : MonoBehaviour
                     {
                         if (selectedInteractable.checkInteractSlot())
                         {
-                            selectedUnits[i].SetFocus(selectedInteractable.gameObject.transform);
-                            selectedUnits[i].startGather(selectedInteractable);
+                            selectedUnits[i].SetGatherResource(selectedInteractable.gameObject.transform);
                             DeselectUnit(selectedUnits[i]);
                             i--;
                         }
@@ -255,8 +254,7 @@ public class PlayerManager : MonoBehaviour
                 {
                     if (interactable.checkInteractSlot())
                     {
-                        selectedUnits[i].SetFocus(interactable.gameObject.transform);
-                        selectedUnits[i].startGather(interactable);
+                        selectedUnits[i].SetGatherResource(interactable.gameObject.transform);
                         DeselectUnit(selectedUnits[i]);
                         i--;
                     }
@@ -271,11 +269,7 @@ public class PlayerManager : MonoBehaviour
     {
         foreach (var selectableObj in selectedUnits)
         {
-            selectableObj.SetNewTarget(enemy.transform);
-            if (selectableObj.IsGathering())
-            {
-                selectableObj.stopGather();
-            }
+            selectableObj.SetNewTarget(enemy.transform);            
         }
     }
 
@@ -294,11 +288,7 @@ public class PlayerManager : MonoBehaviour
         {
             selectableObj.MoveUnit(arrangedTargetPositionList[targetPositionListIndex]);
             targetPositionListIndex = (targetPositionListIndex + 1) % arrangedTargetPositionList.Count;
-            if (selectableObj.IsGathering())
-            {
-                selectableObj.stopGather();
-            }
-
+            
         }
 
     }

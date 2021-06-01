@@ -12,16 +12,5 @@ public class RTSGameManager : MonoBehaviour {
     }
 
 
-    public static void UnitGather(UnitController gatherer, Interactable resource)
-    {
-        
-        if(resource.getCurrentAmount() <= 0 || gatherer.getUnitInventory().calculateFull(resource.item)){            
-            gatherer.stopGather();
-        }else if(resource.getCurrentAmount()>0 )
-        {
-            resource.setCurrentAmount();
-            gatherer.addItemToInventory(resource.item);
-        }
-        
-    }
+   
 }

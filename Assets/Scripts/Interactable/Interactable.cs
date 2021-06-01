@@ -110,15 +110,11 @@ public class Interactable : MonoBehaviour
         {
             return false;
         }
-        else if (attributes[3].value.BaseValue > 0)
-        {
-            takeInteractSlot();
-            return true;
-        }
         else
         {
-            return false;
+            return true;
         }
+        
 
     }
 
