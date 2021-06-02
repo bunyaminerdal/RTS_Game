@@ -88,6 +88,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TargetMesh: {fileID: 5895168085428245274}
   navAgent: {fileID: 4832540666486563556}
+  currentGatherResource: {fileID: 0}
+  currentTargetItem: {fileID: 0}
   unitName: ali1
   unitType: man
   unitDestination: {x: 0, y: 0, z: 0}
@@ -549,7 +551,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2621493037507402764, guid: 28345711cb241b845ad58bc71e0a82ae, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2768490493610040150, guid: 28345711cb241b845ad58bc71e0a82ae, type: 3}
       propertyPath: m_Layer
@@ -613,7 +615,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6162370865727248134, guid: 28345711cb241b845ad58bc71e0a82ae, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6364399475825977656, guid: 28345711cb241b845ad58bc71e0a82ae, type: 3}
       propertyPath: m_Layer

@@ -9,6 +9,7 @@ public class GatherState : IState
     private readonly NavMeshAgent navAgent;
     private readonly Animator animator;
     private Interactable interactable;
+    private Transform interactPoint;
     private float gatherTimer;
     public GatherState(UnitController _unit,NavMeshAgent _navAgent, Animator _animator)
     {
@@ -18,12 +19,14 @@ public class GatherState : IState
     }
     public void OnEnter()
     {
-        if (Vector3.Distance(unit.currentGatherResource.position, unit.transform.position) > navAgent.stoppingDistance)
+        interactable = unit.currentGatherResource.GetComponent<Interactable>();
+        interactPoint = unit.currentGatherResource.Find("InteractionPoint").gameObject.transform;
+        if (Vector3.Distance(interactPoint.position, unit.transform.position) > navAgent.stoppingDistance)
         {
             animator.SetBool("isRunning", true);
-            navAgent.SetDestination(unit.currentGatherResource.position);
+            navAgent.SetDestination(interactPoint.position);
         }
-        interactable = unit.currentGatherResource.GetComponent<Interactable>();
+        
         gatherTimer = unit.GatherTimer;
         interactable.takeInteractSlot();
     }
@@ -32,9 +35,11 @@ public class GatherState : IState
     {
         animator.SetBool("isRunning", false);
         animator.SetBool("isGathering", false);
-        unit.currentGatherResource = null;
-        gatherTimer = 0;
         interactable.giveInteractSlot();
+        unit.currentGatherResource = null;
+        interactable = null;
+        gatherTimer = 0;
+        unit.ClearPath();
         if (unit.NewMeshWeapon != null)
             if (!unit.NewMeshWeapon.gameObject.activeSelf)
                 unit.NewMeshWeapon.gameObject.SetActive(true);
@@ -42,17 +47,27 @@ public class GatherState : IState
 
     public void Tick()
     {
-        if (navAgent.remainingDistance <= navAgent.stoppingDistance)
+        
+        if (Vector3.Distance(interactPoint.position, unit.transform.position) <= navAgent.stoppingDistance )
         {
-            animator.SetBool("isRunning", false);
-            if(gatherTimer == unit.GatherTimer)
+            FaceTarget(unit.currentGatherResource);
+            if (gatherTimer == unit.GatherTimer)
+            {
+                unit.ClearPath();
                 animator.SetBool("isGathering", true);
-
-            if (unit.NewMeshWeapon != null)
-                if (unit.NewMeshWeapon.gameObject.activeSelf)
-                    unit.NewMeshWeapon.gameObject.SetActive(false);
+                
+                animator.SetBool("isRunning", false);
+                if (unit.NewMeshWeapon != null)
+                    if (unit.NewMeshWeapon.gameObject.activeSelf)
+                        unit.NewMeshWeapon.gameObject.SetActive(false);
+            }  
             Gather();
-        }              
+        }
+        else
+        {
+            unit.DrawPath();
+        }
+                 
     }
 
     void Gather()
@@ -72,5 +87,11 @@ public class GatherState : IState
             }
             
         }
+    }
+    void FaceTarget(Transform target)
+    {
+        Vector3 direction = (target.position - unit.transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0f, direction.z));
+        unit.transform.rotation = Quaternion.Slerp(unit.transform.rotation, lookRotation, Time.deltaTime * 5f);
     }
 }

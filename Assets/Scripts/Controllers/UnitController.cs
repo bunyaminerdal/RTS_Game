@@ -26,16 +26,16 @@ public class UnitController : MonoBehaviour
     public Interactable unitInteract;
 
     public UnitStats unitStats;
-    private bool isGathering;
 
     [SerializeField]
     private GameObject clickMarker;
     public Interactable interact;
     
     public Transform clickMarkerTransform;
+
     [SerializeField]
     private GameObject selectionMarker;
-    private LineRenderer myLineRenderer;
+    private LineRenderer lineRenderer;
     private bool isUnitSelected;
     private UnitInventory unitInventory = new UnitInventory(6);
     public UnitInventory unitInventoryStart = new UnitInventory(6);
@@ -62,6 +62,7 @@ public class UnitController : MonoBehaviour
 
     //state
     private StateMachine stateMachine;
+    private IdleState idleState;
     private MoveToDestinationState moveToDestinationState;
     private TakeGroundItemState takeGroundItemState;
     private GatherState gatherState;
@@ -76,12 +77,12 @@ public class UnitController : MonoBehaviour
         navAgent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
         //clickMarker
-        myLineRenderer = GetComponent<LineRenderer>();
+        lineRenderer = GetComponent<LineRenderer>();
 
         //state
         stateMachine = new StateMachine();
-        var idleState = new IdleState(this, navAgent, animator);
-        moveToDestinationState = new MoveToDestinationState(this, navAgent, animator,myLineRenderer,clickMarkerTransform,clickMarker);
+        idleState = new IdleState(this, navAgent, animator);
+        moveToDestinationState = new MoveToDestinationState(this, navAgent, animator,clickMarkerTransform,clickMarker);
         takeGroundItemState = new TakeGroundItemState(this, navAgent, animator);
         gatherState = new GatherState(this,navAgent,animator);
 
@@ -115,9 +116,9 @@ public class UnitController : MonoBehaviour
         navAgent.stoppingDistance = 1f;
 
         //clickmarker
-        myLineRenderer.startWidth = 0.1f;
-        myLineRenderer.endWidth = 0.1f;
-        myLineRenderer.positionCount = 0;
+        lineRenderer.startWidth = 0.1f;
+        lineRenderer.endWidth = 0.1f;
+        lineRenderer.positionCount = 0;
 
         if (unitDestination != transform.position)
         {
@@ -310,7 +311,7 @@ public class UnitController : MonoBehaviour
                 clickMarker.SetActive(false);
                 clickMarker.transform.position = transform.position;
                 clickMarker.transform.SetParent(transform);
-                myLineRenderer.positionCount = 0;
+                lineRenderer.positionCount = 0;
             }
             if (attributes[1].stringValue.ModifiedValue != "Idle")
             {
@@ -338,7 +339,7 @@ public class UnitController : MonoBehaviour
                     clickMarker.SetActive(false);
                     clickMarker.transform.position = transform.position;
                     clickMarker.transform.SetParent(transform);
-                    myLineRenderer.positionCount = 0;
+                    lineRenderer.positionCount = 0;
                 }
             }
             if (attributes[1].stringValue.ModifiedValue != "Running")
@@ -358,7 +359,7 @@ public class UnitController : MonoBehaviour
 
             distance = (transform.position - currentTarget.position).magnitude;
 
-            FaceTarget(currentTarget);
+            
             if (distance <= attributes[6].value.ModifiedValue)
             {
                 if (attributes[6].value.ModifiedValue <= 2)
@@ -385,48 +386,7 @@ public class UnitController : MonoBehaviour
                 navAgent.destination = currentTarget.position;
             }
         }
-        if (currentGatherResource != null)
-        {
-            if (navAgent.destination != currentGatherResource.Find("InteractionPoint").gameObject.transform.position)
-            {
-                navAgent.destination = currentGatherResource.Find("InteractionPoint").gameObject.transform.position;
-                distance = (transform.position - currentGatherResource.Find("InteractionPoint").gameObject.transform.position).magnitude;
-            }
-            FaceTarget(currentGatherResource);
-            if (distance <= 2f)
-            {
-                if (isGathering)
-                {
-                    GatherTimer -= Time.deltaTime;
-                    Gather();
-                    if (attributes[1].stringValue.ModifiedValue != "Gathering")
-                    {
-                        attributes[1].stringValue.BaseValue = "Gathering";
-                        animator.SetBool("isGathering", true);
-                    }
-                }
-
-            }
-
-
-        }
-
-        if (currentTargetItem != null)
-        {
-            if (navAgent.destination != currentTargetItem.position)
-            {
-                navAgent.destination = currentTargetItem.position;
-                distance = (transform.position - currentTargetItem.position).magnitude;
-            }
-
-            if (distance <= 2f)
-            {
-                var item = currentTargetItem.GetComponent<GroundItem>();
-                unitInventory.AddItem(item.item, 1);
-                Destroy(item.gameObject);
-            }
-
-        }
+        
     }
 
     public void MoveUnit(Vector3 dest)
@@ -449,15 +409,17 @@ public class UnitController : MonoBehaviour
 
     public void SetNewTarget(Transform enemy)
     {
-        currentTarget = enemy;
-        currentGatherResource = null;
-        currentTargetItem = null;
-        navAgent.updateRotation = false;
-        attackTimer = attributes[4].value.ModifiedValue;
+        //currentTarget = enemy;
+        //currentGatherResource = null;
+        //currentTargetItem = null;
+        //navAgent.updateRotation = false;
+        //attackTimer = attributes[4].value.ModifiedValue;
     }
 
     public void SetGatherResource(Transform newGatherResource)
     {
+        if (currentGatherResource == newGatherResource) return;
+        if (currentGatherResource != null && newGatherResource != currentGatherResource) stateMachine.SetState(idleState);
         currentGatherResource = newGatherResource;
         GatherTimer = unitStats.gatheringSpeed;
         stateMachine.SetState(gatherState);
@@ -516,12 +478,7 @@ public class UnitController : MonoBehaviour
     }
 
 
-    void FaceTarget(Transform target)
-    {
-        Vector3 direction = (target.position - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0f, direction.z));
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
-    }
+    
 
     public void GetItem(Transform item)
     {
@@ -570,6 +527,54 @@ public class UnitController : MonoBehaviour
     {
         if (!gameObject) return;
         Destroy(gameObject);
+    }
+    //clickMarker
+    public void DrawPath()
+    {
+        if (isSelected())
+        {
+            lineRenderer.positionCount = navAgent.path.corners.Length;
+            lineRenderer.SetPosition(0, transform.position);
+            if (navAgent.path.corners.Length < 2)
+            {
+                return;
+            }
+            Vector3 pointPos = Vector3.zero;
+            for (int i = 0; i < navAgent.path.corners.Length; i++)
+            {
+                pointPos = new Vector3(navAgent.path.corners[i].x, navAgent.path.corners[i].y, navAgent.path.corners[i].z);
+                lineRenderer.SetPosition(i, pointPos);
+            }
+            clickMarker.transform.position = pointPos;
+            if (!clickMarker.activeSelf)
+            {
+                //click marker                
+                clickMarker.transform.SetParent(clickMarkerTransform);
+                clickMarker.SetActive(true);
+            }
+        }
+        else
+        {
+            if (clickMarker.activeSelf)
+            {
+                clickMarker.SetActive(false);
+                clickMarker.transform.position = transform.position;
+                clickMarker.transform.SetParent(transform);
+                lineRenderer.positionCount = 0;
+            }
+        }
+
+    }
+
+    public void ClearPath()
+    {
+        if (clickMarker.activeSelf)
+        {
+            clickMarker.SetActive(false);
+            clickMarker.transform.position = transform.position;
+            clickMarker.transform.SetParent(transform);
+            lineRenderer.positionCount = 0;
+        }
     }
 }
 

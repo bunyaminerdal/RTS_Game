@@ -244,12 +244,11 @@ public class PlayerManager : MonoBehaviour
 
     public void SelectedInteractable(Interactable interactable)
     {
-
+        
         for (int i = 0; i < selectedUnits.Count; i++)
         {
             if (interactable.getCurrentAmount() > 0)
             {
-
                 if (selectedUnits[i].getUnitInventory().calculateFull(interactable.item) == false)
                 {
                     if (interactable.checkInteractSlot())

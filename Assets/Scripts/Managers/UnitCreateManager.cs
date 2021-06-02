@@ -70,22 +70,22 @@ public class UnitCreateManager : MonoBehaviour
         interactableList[3] = interact4;
 
 
-        unitList = new UnitBasics[1];
-        //UnitBasics unit1 = new UnitBasics("Ali", "man", new Vector3(0f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(0f, 0.0833f, 0f), "cop1");
+        unitList = new UnitBasics[7];
+        UnitBasics unit1 = new UnitBasics("Ali", "man", new Vector3(0f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(0f, 0.0833f, 0f), "cop1");
         UnitBasics unit2 = new UnitBasics("Cafer", "man1", new Vector3(2f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(2f, 0.0833f, 0f), "No interact");
-        //UnitBasics unit3 = new UnitBasics("Kamil", "man2", new Vector3(-2f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(2f, 0.0833f, 0f), "cop4");
-        //UnitBasics unit4 = new UnitBasics("polisamca", "police", new Vector3(4f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(4f, 0.0833f, 0f), "No interact");
-        //UnitBasics unit5 = new UnitBasics("Zilli", "woman", new Vector3(6f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(6f, 0.0833f, 0f), "No interact");
-        //UnitBasics unit6 = new UnitBasics("Zilloş", "woman1", new Vector3(8f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(8f, 0.0833f, 0f), "No interact");
-        //UnitBasics unit7 = new UnitBasics("Zeliha", "woman2", new Vector3(10f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(10f, 0.0833f, 0f), "No interact");
+        UnitBasics unit3 = new UnitBasics("Kamil", "man2", new Vector3(-2f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(2f, 0.0833f, 0f), "cop4");
+        UnitBasics unit4 = new UnitBasics("polisamca", "police", new Vector3(4f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(4f, 0.0833f, 0f), "No interact");
+        UnitBasics unit5 = new UnitBasics("Zilli", "woman", new Vector3(6f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(6f, 0.0833f, 0f), "No interact");
+        UnitBasics unit6 = new UnitBasics("Zilloş", "woman1", new Vector3(8f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(8f, 0.0833f, 0f), "No interact");
+        UnitBasics unit7 = new UnitBasics("Zeliha", "woman2", new Vector3(10f, 0.0833f, 0f), new Vector3(0f, 0f, 0f), false, new Vector3(10f, 0.0833f, 0f), "No interact");
 
-        unitList[0] = unit2;
-        //unitList[1] = unit2;
-        //unitList[2] = unit3;
-        //unitList[3] = unit4;
-        //unitList[4] = unit5;
-        //unitList[5] = unit6;
-        //unitList[6] = unit7;
+        unitList[0] = unit1;
+        unitList[1] = unit2;
+        unitList[2] = unit3;
+        unitList[3] = unit4;
+        unitList[4] = unit5;
+        unitList[5] = unit6;
+        unitList[6] = unit7;
 
         inventoryList = new InventoryBasics[0];
         itemList = new ItemBasics[0];
