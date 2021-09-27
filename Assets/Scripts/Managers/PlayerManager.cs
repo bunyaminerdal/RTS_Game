@@ -160,7 +160,7 @@ public class PlayerManager : MonoBehaviour
         selectedInteractable.attributes[4].unityAction = onCollectClicked;
         interactable.SetInteractableSelected(true);
         displayInteractable.UpdateInteractable(selectedInteractable);
-        
+
     }
 
     private void İnteractable_onCollectButtonpressed()
@@ -244,7 +244,7 @@ public class PlayerManager : MonoBehaviour
 
     public void SelectedInteractable(Interactable interactable)
     {
-        
+
         for (int i = 0; i < selectedUnits.Count; i++)
         {
             if (interactable.getCurrentAmount() > 0)
@@ -268,7 +268,7 @@ public class PlayerManager : MonoBehaviour
     {
         foreach (var selectableObj in selectedUnits)
         {
-            selectableObj.SetNewTarget(enemy.transform);            
+            selectableObj.SetNewTarget(enemy.transform);
         }
     }
 
@@ -287,7 +287,7 @@ public class PlayerManager : MonoBehaviour
         {
             selectableObj.MoveUnit(arrangedTargetPositionList[targetPositionListIndex]);
             targetPositionListIndex = (targetPositionListIndex + 1) % arrangedTargetPositionList.Count;
-            
+
         }
 
     }
